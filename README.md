@@ -23,6 +23,5 @@ _If you're only interested in downloading the binary, you can find the 1.0 relea
 Documentation
 --------------------------------------------------
 
-[Getting Started - How to use dotMath]()
-
-[Built-in functions and operators]()
+* [Getting Started - How to Use dotMath](https://github.com/bcwood/dotMath/wiki/Getting-Started)
+* [Built-in Operators and Functions](https://github.com/bcwood/dotMath/wiki/Built-in-Operators-and-Functions)
