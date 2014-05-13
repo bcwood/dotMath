@@ -69,9 +69,9 @@ namespace dotMath.Tests
 			}
 		}
 
-		private EqCompiler GetCompilerSetup(string sFunction)
+		private EquationCompiler GetCompilerSetup(string sFunction)
 		{
-			EqCompiler oComp = new EqCompiler(sFunction);
+			EquationCompiler oComp = new EquationCompiler(sFunction);
 			oComp.SetVariable("a", m_a);
 			oComp.SetVariable("b", m_b);
 			oComp.SetVariable("c", m_c);
@@ -83,7 +83,7 @@ namespace dotMath.Tests
 		[Test]
 		public void ConstantExpression()
 		{
-			EqCompiler oComp = GetCompilerSetup("a");
+			EquationCompiler oComp = GetCompilerSetup("a");
 
 			Assert.AreEqual(m_a, oComp.Calculate());
 		}
@@ -92,7 +92,7 @@ namespace dotMath.Tests
 		[Test]
 		public void SignNeg()
 		{
-			EqCompiler oComp = GetCompilerSetup("-a");
+			EquationCompiler oComp = GetCompilerSetup("-a");
 
 			Assert.AreEqual(-m_a, oComp.Calculate());
 		}
@@ -100,7 +100,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Addition()
 		{
-			EqCompiler oComp = GetCompilerSetup("a+b");
+			EquationCompiler oComp = GetCompilerSetup("a+b");
 
 			Assert.AreEqual(m_a + m_b, oComp.Calculate());
 		}
@@ -108,7 +108,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Multiplication()
 		{
-			EqCompiler oComp = GetCompilerSetup("a*b");
+			EquationCompiler oComp = GetCompilerSetup("a*b");
 
 			Assert.AreEqual(m_a * m_b, oComp.Calculate());
 		}
@@ -116,7 +116,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Division()
 		{
-			EqCompiler oComp = GetCompilerSetup("a/b");
+			EquationCompiler oComp = GetCompilerSetup("a/b");
 
 			Assert.AreEqual(m_a / m_b, oComp.Calculate());
 		}
@@ -124,7 +124,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Subtraction()
 		{
-			EqCompiler oComp = GetCompilerSetup("a-b");
+			EquationCompiler oComp = GetCompilerSetup("a-b");
 
 			Assert.AreEqual(m_a - m_b, oComp.Calculate());
 		}
@@ -132,7 +132,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Exponent()
 		{
-			EqCompiler oComp = GetCompilerSetup("a^b");
+			EquationCompiler oComp = GetCompilerSetup("a^b");
 
 			Assert.AreEqual(Math.Pow(m_a, m_b), oComp.Calculate());
 		}
@@ -140,7 +140,7 @@ namespace dotMath.Tests
 		[Test]
 		public void MultipleFunctionsPerObject()
 		{
-			EqCompiler oComp = GetCompilerSetup("abs(b)");
+			EquationCompiler oComp = GetCompilerSetup("abs(b)");
 			Assert.AreEqual(Math.Abs(m_b), oComp.Calculate());
 
 			oComp.SetFunction("acos(a)");
@@ -150,7 +150,7 @@ namespace dotMath.Tests
 		[Test]
 		public void NestedFunctions()
 		{
-			EqCompiler oComp = GetCompilerSetup("sin(cos(tan(a)))");
+			EquationCompiler oComp = GetCompilerSetup("sin(cos(tan(a)))");
 
 			Assert.AreEqual(Math.Sin(Math.Cos(Math.Tan(m_a))), oComp.Calculate());
 		}
@@ -158,7 +158,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Abs()
 		{
-			EqCompiler oComp = GetCompilerSetup("abs(-a)");
+			EquationCompiler oComp = GetCompilerSetup("abs(-a)");
 
 			Assert.AreEqual(Math.Abs(-m_a), oComp.Calculate());
 		}
@@ -166,7 +166,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Acos()
 		{
-			EqCompiler oComp = GetCompilerSetup("acos(a)");
+			EquationCompiler oComp = GetCompilerSetup("acos(a)");
 
 			Assert.AreEqual(Math.Acos(m_a), oComp.Calculate());
 		}
@@ -174,7 +174,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Asin()
 		{
-			EqCompiler oComp = GetCompilerSetup("asin(a)");
+			EquationCompiler oComp = GetCompilerSetup("asin(a)");
 
 			Assert.AreEqual(Math.Asin(m_a), oComp.Calculate());
 		}
@@ -182,7 +182,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Atan()
 		{
-			EqCompiler oComp = GetCompilerSetup("atan(a)");
+			EquationCompiler oComp = GetCompilerSetup("atan(a)");
 
 			Assert.AreEqual(Math.Atan(m_a), oComp.Calculate());
 		}
@@ -190,7 +190,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Ceiling()
 		{
-			EqCompiler oComp = GetCompilerSetup("ceiling(b)");
+			EquationCompiler oComp = GetCompilerSetup("ceiling(b)");
 
 			Assert.AreEqual(Math.Ceiling(m_b), oComp.Calculate());
 		}
@@ -198,7 +198,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Cos()
 		{
-			EqCompiler oComp = GetCompilerSetup("cos(b)");
+			EquationCompiler oComp = GetCompilerSetup("cos(b)");
 
 			Assert.AreEqual(Math.Cos(m_b), oComp.Calculate());
 		}
@@ -206,7 +206,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Cosh()
 		{
-			EqCompiler oComp = GetCompilerSetup("cosh(a)");
+			EquationCompiler oComp = GetCompilerSetup("cosh(a)");
 
 			Assert.AreEqual(Math.Cosh(m_a), oComp.Calculate());
 		}
@@ -214,7 +214,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Exp()
 		{
-			EqCompiler oComp = GetCompilerSetup("exp(a)");
+			EquationCompiler oComp = GetCompilerSetup("exp(a)");
 
 			Assert.AreEqual(Math.Exp(m_a), oComp.Calculate());
 		}
@@ -222,7 +222,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Floor()
 		{
-			EqCompiler oComp = GetCompilerSetup("floor(-a)");
+			EquationCompiler oComp = GetCompilerSetup("floor(-a)");
 
 			Assert.AreEqual(Math.Floor(-m_a), oComp.Calculate());
 		}
@@ -230,7 +230,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Log()
 		{
-			EqCompiler oComp = GetCompilerSetup("log(a)");
+			EquationCompiler oComp = GetCompilerSetup("log(a)");
 
 			Assert.AreEqual(Math.Log(m_a), oComp.Calculate());
 		}
@@ -238,7 +238,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Log10()
 		{
-			EqCompiler oComp = GetCompilerSetup("log10(a)");
+			EquationCompiler oComp = GetCompilerSetup("log10(a)");
 
 			Assert.AreEqual(Math.Log10(m_a), oComp.Calculate());
 		}
@@ -246,7 +246,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Round()
 		{
-			EqCompiler oComp = GetCompilerSetup("round(a)");
+			EquationCompiler oComp = GetCompilerSetup("round(a)");
 
 			Assert.AreEqual(Math.Round(m_a), oComp.Calculate());
 		}
@@ -254,7 +254,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sign()
 		{
-			EqCompiler oComp = GetCompilerSetup("sign(-a)");
+			EquationCompiler oComp = GetCompilerSetup("sign(-a)");
 
 			Assert.AreEqual(Math.Sign(-m_a), oComp.Calculate());
 		}
@@ -262,7 +262,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sin()
 		{
-			EqCompiler oComp = GetCompilerSetup("sin(a)");
+			EquationCompiler oComp = GetCompilerSetup("sin(a)");
 
 			Assert.AreEqual(Math.Sin(m_a), oComp.Calculate());
 		}
@@ -270,7 +270,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sinh()
 		{
-			EqCompiler oComp = GetCompilerSetup("sinh(a)");
+			EquationCompiler oComp = GetCompilerSetup("sinh(a)");
 
 			Assert.AreEqual(Math.Sinh(m_a), oComp.Calculate());
 		}
@@ -278,7 +278,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sqrt()
 		{
-			EqCompiler oComp = GetCompilerSetup("sqrt(a)");
+			EquationCompiler oComp = GetCompilerSetup("sqrt(a)");
 
 			Assert.AreEqual(Math.Sqrt(m_a), oComp.Calculate());
 		}
@@ -286,7 +286,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Tan()
 		{
-			EqCompiler oComp = GetCompilerSetup("tan(a)");
+			EquationCompiler oComp = GetCompilerSetup("tan(a)");
 
 			Assert.AreEqual(Math.Tan(m_a), oComp.Calculate());
 		}
@@ -294,7 +294,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Tanh()
 		{
-			EqCompiler oComp = GetCompilerSetup("tanh(a)");
+			EquationCompiler oComp = GetCompilerSetup("tanh(a)");
 
 			Assert.AreEqual(Math.Tanh(m_a), oComp.Calculate());
 		}

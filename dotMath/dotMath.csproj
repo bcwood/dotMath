@@ -97,10 +97,8 @@
   <ItemGroup>
     <Compile Include="Core\BaseClasses.cs" />
     <Compile Include="Core\Token.cs" />
+    <Compile Include="EquationCompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="EqCompiler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Core\Parser.cs">

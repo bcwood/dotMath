@@ -40,11 +40,10 @@ namespace dotMath
 	/// </remarks>
 	/// 
 	/// <summary>
-	/// EqCompiler is the class that takes the parsed tokens and turns them
-	/// into a network of pre-compiled objects that perform the designated
-	/// functions.
+	/// EquationCompiler is the class that takes the parsed tokens and turns them
+	/// into a network of pre-compiled objects that perform the designated functions.
 	/// </summary>
-	public class EqCompiler
+	public class EquationCompiler
 	{
 		private string _equation;
 		private CValue _function;
@@ -59,7 +58,7 @@ namespace dotMath
 		/// Creates the compiler object and sets the current function to the string passed
 		/// </summary>
 		/// <param name="equation"></param>
-		public EqCompiler(string equation = null)
+		public EquationCompiler(string equation = null)
 		{
 			SetFunction(equation);
 			InitOperators();
