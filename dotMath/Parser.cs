@@ -5,6 +5,7 @@ namespace dotMath
 {
 	/// <remarks>
 	/// Copyright (c) 2001-2004, Stephen Hebert
+	/// Copyright (c) 2014, Brandon Wood
 	/// All rights reserved.
 	/// 
 	/// 

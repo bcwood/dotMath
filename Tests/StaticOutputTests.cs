@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using NUnit.Framework;
 
 namespace dotMath.Tests
@@ -19,7 +18,7 @@ namespace dotMath.Tests
 			m_c = -8;
 			m_d = -8;
 
-			EqCompiler oComp = new EqCompiler(sFunction, true);
+			EqCompiler oComp = new EqCompiler(sFunction);
 			oComp.SetVariable("a", m_a);
 			oComp.SetVariable("b", m_b);
 			oComp.SetVariable("c", m_c);
@@ -99,7 +98,7 @@ namespace dotMath.Tests
 		[Test]
 		public void MultipleFunctionsPerObject()
 		{
-			EqCompiler oComp = new EqCompiler("abs(-4)", true);
+			EqCompiler oComp = new EqCompiler("abs(-4)");
 			Assert.AreEqual(Math.Abs(-4), oComp.Calculate());
 
 			oComp.SetFunction("acos(10)");
@@ -109,7 +108,7 @@ namespace dotMath.Tests
 		[Test]
 		public void NestedFunctions()
 		{
-			EqCompiler oComp = new EqCompiler("sin(cos(tan(4.2)))", true);
+			EqCompiler oComp = new EqCompiler("sin(cos(tan(4.2)))");
 
 			Assert.AreEqual(Math.Sin(Math.Cos(Math.Tan(4.2))), oComp.Calculate());
 		}
@@ -117,7 +116,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Abs()
 		{
-			EqCompiler oComp = new EqCompiler("abs(-5)", true);
+			EqCompiler oComp = new EqCompiler("abs(-5)");
 
 			Assert.AreEqual(Math.Abs(-5), oComp.Calculate());
 		}
@@ -125,7 +124,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Acos()
 		{
-			EqCompiler oComp = new EqCompiler("acos(4)", true);
+			EqCompiler oComp = new EqCompiler("acos(4)");
 
 			Assert.AreEqual(Math.Acos(4), oComp.Calculate());
 		}
@@ -133,7 +132,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Asin()
 		{
-			EqCompiler oComp = new EqCompiler("asin(4)", true);
+			EqCompiler oComp = new EqCompiler("asin(4)");
 
 			Assert.AreEqual(Math.Asin(4), oComp.Calculate());
 		}
@@ -141,7 +140,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Atan()
 		{
-			EqCompiler oComp = new EqCompiler("atan(4)", true);
+			EqCompiler oComp = new EqCompiler("atan(4)");
 
 			Assert.AreEqual(Math.Atan(4), oComp.Calculate());
 		}
@@ -149,7 +148,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Ceiling()
 		{
-			EqCompiler oComp = new EqCompiler("ceiling(-3.2)", true);
+			EqCompiler oComp = new EqCompiler("ceiling(-3.2)");
 
 			Assert.AreEqual(Math.Ceiling(-3.2), oComp.Calculate());
 		}
@@ -157,7 +156,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Cos()
 		{
-			EqCompiler oComp = new EqCompiler("cos(4)", true);
+			EqCompiler oComp = new EqCompiler("cos(4)");
 
 			Assert.AreEqual(Math.Cos(4), oComp.Calculate());
 		}
@@ -165,7 +164,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Cosh()
 		{
-			EqCompiler oComp = new EqCompiler("cosh(4)", true);
+			EqCompiler oComp = new EqCompiler("cosh(4)");
 
 			Assert.AreEqual(Math.Cosh(4), oComp.Calculate());
 		}
@@ -173,7 +172,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Exp()
 		{
-			EqCompiler oComp = new EqCompiler("exp(4.2)", true);
+			EqCompiler oComp = new EqCompiler("exp(4.2)");
 
 			Assert.AreEqual(Math.Exp(4.2), oComp.Calculate());
 		}
@@ -181,7 +180,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Floor()
 		{
-			EqCompiler oComp = new EqCompiler("floor(-4.2)", true);
+			EqCompiler oComp = new EqCompiler("floor(-4.2)");
 
 			Assert.AreEqual(Math.Floor(-4.2), oComp.Calculate());
 		}
@@ -189,7 +188,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Log()
 		{
-			EqCompiler oComp = new EqCompiler("log(4.2)", true);
+			EqCompiler oComp = new EqCompiler("log(4.2)");
 
 			Assert.AreEqual(Math.Log(4.2), oComp.Calculate());
 		}
@@ -197,7 +196,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Log10()
 		{
-			EqCompiler oComp = new EqCompiler("log10(4.2)", true);
+			EqCompiler oComp = new EqCompiler("log10(4.2)");
 
 			Assert.AreEqual(Math.Log10(4.2), oComp.Calculate());
 		}
@@ -205,7 +204,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Round()
 		{
-			EqCompiler oComp = new EqCompiler("round(4.2)", true);
+			EqCompiler oComp = new EqCompiler("round(4.2)");
 
 			Assert.AreEqual(Math.Round(4.2), oComp.Calculate());
 		}
@@ -213,7 +212,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sign()
 		{
-			EqCompiler oComp = new EqCompiler("sign(-4.2)", true);
+			EqCompiler oComp = new EqCompiler("sign(-4.2)");
 
 			Assert.AreEqual(Math.Sign(-4.2), oComp.Calculate());
 		}
@@ -221,7 +220,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sin()
 		{
-			EqCompiler oComp = new EqCompiler("sin(4.2)", true);
+			EqCompiler oComp = new EqCompiler("sin(4.2)");
 
 			Assert.AreEqual(Math.Sin(4.2), oComp.Calculate());
 		}
@@ -229,7 +228,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sinh()
 		{
-			EqCompiler oComp = new EqCompiler("sinh(4.2)", true);
+			EqCompiler oComp = new EqCompiler("sinh(4.2)");
 
 			Assert.AreEqual(Math.Sinh(4.2), oComp.Calculate());
 		}
@@ -237,7 +236,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Sqrt()
 		{
-			EqCompiler oComp = new EqCompiler("sqrt(4.2)", true);
+			EqCompiler oComp = new EqCompiler("sqrt(4.2)");
 
 			Assert.AreEqual(Math.Sqrt(4.2), oComp.Calculate());
 		}
@@ -245,7 +244,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Tan()
 		{
-			EqCompiler oComp = new EqCompiler("tan(4.2)", true);
+			EqCompiler oComp = new EqCompiler("tan(4.2)");
 
 			Assert.AreEqual(Math.Tan(4.2), oComp.Calculate());
 		}
@@ -253,77 +252,77 @@ namespace dotMath.Tests
 		[Test]
 		public void Tanh()
 		{
-			EqCompiler oComp = new EqCompiler("tanh(4.2)", true);
+			EqCompiler oComp = new EqCompiler("tanh(4.2)");
 
 			Assert.AreEqual(Math.Tanh(4.2), oComp.Calculate());
 		}
 
-		[Test]
-		public void Max_ExtremeTest()
-		{
-			StringBuilder sMax = new StringBuilder("max( 3,2,5,4", 300000);  //actual needed space is 288903
+		//[Test]
+		//public void Max_ExtremeTest()
+		//{
+		//	StringBuilder sMax = new StringBuilder("max( 3,2,5,4", 300000);  //actual needed space is 288903
 
-			for (int i = 0; i < 50000; i++)
-				sMax.AppendFormat(",{0}", i);
+		//	for (int i = 0; i < 50000; i++)
+		//		sMax.AppendFormat(",{0}", i);
 
-			sMax.Append(")");
+		//	sMax.Append(")");
 
-			EqCompiler oComp = new EqCompiler(sMax.ToString(), true);
+		//	EqCompiler oComp = new EqCompiler(sMax.ToString());
 
-			Assert.AreEqual(49999, oComp.Calculate());
-		}
+		//	Assert.AreEqual(49999, oComp.Calculate());
+		//}
 
-		[Test]
-		public void Max()
-		{
-			EqCompiler oComp = new EqCompiler("max(3,2,5,4)", true);
+		//[Test]
+		//public void Max()
+		//{
+		//	EqCompiler oComp = new EqCompiler("max(3,2,5,4)");
 
-			Assert.AreEqual(5, oComp.Calculate());
-		}
+		//	Assert.AreEqual(5, oComp.Calculate());
+		//}
 
-		[Test]
-		public void Min_ExtremeTest()
-		{
-			StringBuilder sMin = new StringBuilder("min(3,2,5,4", 300000); //actual needed space is 288903
+		//[Test]
+		//public void Min_ExtremeTest()
+		//{
+		//	StringBuilder sMin = new StringBuilder("min(3,2,5,4", 300000); //actual needed space is 288903
 
-			for (int i = 0; i < 50000; i++)
-				sMin.Append(string.Format(",{0}", i));
+		//	for (int i = 0; i < 50000; i++)
+		//		sMin.Append(string.Format(",{0}", i));
 
-			sMin.Append(")");
+		//	sMin.Append(")");
 
-			EqCompiler oComp = new EqCompiler(sMin.ToString(), true);
+		//	EqCompiler oComp = new EqCompiler(sMin.ToString());
 
-			Assert.AreEqual(0, oComp.Calculate());
-		}
+		//	Assert.AreEqual(0, oComp.Calculate());
+		//}
 
-		[Test]
-		public void Min()
-		{
-			EqCompiler oComp = new EqCompiler("min(3,2,5,4)", true);
+		//[Test]
+		//public void Min()
+		//{
+		//	EqCompiler oComp = new EqCompiler("min(3,2,5,4)");
 
-			Assert.AreEqual(2, oComp.Calculate());
-		}
+		//	Assert.AreEqual(2, oComp.Calculate());
+		//}
 
-		[Test]
-		public void IfThen()
-		{
-			EqCompiler oComp = new EqCompiler("if(1<2,3,4)", true);
+		//[Test]
+		//public void IfThen()
+		//{
+		//	EqCompiler oComp = new EqCompiler("if(1<2,3,4)");
 
-			Assert.AreEqual(3, oComp.Calculate());
-		}
+		//	Assert.AreEqual(3, oComp.Calculate());
+		//}
 
-		[Test]
-		public void IfElse()
-		{
-			EqCompiler oComp = new EqCompiler("if(2<1,3,4)", true);
+		//[Test]
+		//public void IfElse()
+		//{
+		//	EqCompiler oComp = new EqCompiler("if(2<1,3,4)");
 
-			Assert.AreEqual(4, oComp.Calculate());
-		}
+		//	Assert.AreEqual(4, oComp.Calculate());
+		//}
 
 		[Test]
 		public void BinaryOperators()
 		{
-			EqCompiler oComp = new EqCompiler(true);
+			EqCompiler oComp = new EqCompiler();
 
 			oComp.SetFunction("1<2");
 			Assert.AreEqual(1, oComp.Calculate());

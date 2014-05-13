@@ -47,12 +47,12 @@ namespace dotMath.Tests
 				Exp();
 				Exponent();
 				Floor();
-				IfElse();
-				IfThen();
+				//IfElse();
+				//IfThen();
 				Log();
 				Log10();
-				Max();
-				Min();
+				//Max();
+				//Min();
 				MultipleFunctionsPerObject();
 				Multiplication();
 				NestedFunctions();
@@ -71,7 +71,7 @@ namespace dotMath.Tests
 
 		private EqCompiler GetCompilerSetup(string sFunction)
 		{
-			EqCompiler oComp = new EqCompiler(sFunction, true);
+			EqCompiler oComp = new EqCompiler(sFunction);
 			oComp.SetVariable("a", m_a);
 			oComp.SetVariable("b", m_b);
 			oComp.SetVariable("c", m_c);
@@ -299,70 +299,70 @@ namespace dotMath.Tests
 			Assert.AreEqual(Math.Tanh(m_a), oComp.Calculate());
 		}
 
-		[Test]
-		public void Max()
-		{
-			EqCompiler oComp = GetCompilerSetup("max(a,b,c,d)");
-			double dMax = m_a;
+		//[Test]
+		//public void Max()
+		//{
+		//	EqCompiler oComp = GetCompilerSetup("max(a,b,c,d)");
+		//	double dMax = m_a;
 
-			if (dMax < m_b)
-				dMax = m_b;
-			if (dMax < m_c)
-				dMax = m_c;
-			if (dMax < m_d)
-				dMax = m_d;
+		//	if (dMax < m_b)
+		//		dMax = m_b;
+		//	if (dMax < m_c)
+		//		dMax = m_c;
+		//	if (dMax < m_d)
+		//		dMax = m_d;
 
-			Assert.AreEqual(dMax, oComp.Calculate());
-		}
+		//	Assert.AreEqual(dMax, oComp.Calculate());
+		//}
 
-		[Test]
-		public void Min()
-		{
-			EqCompiler oComp = GetCompilerSetup("min(a,b,c,d)");
+		//[Test]
+		//public void Min()
+		//{
+		//	EqCompiler oComp = GetCompilerSetup("min(a,b,c,d)");
 
-			double dMin = m_a;
-			if (dMin > m_b)
-				dMin = m_b;
-			if (dMin > m_c)
-				dMin = m_c;
-			if (dMin > m_d)
-				dMin = m_d;
+		//	double dMin = m_a;
+		//	if (dMin > m_b)
+		//		dMin = m_b;
+		//	if (dMin > m_c)
+		//		dMin = m_c;
+		//	if (dMin > m_d)
+		//		dMin = m_d;
 
-			Assert.AreEqual(dMin, oComp.Calculate());
-		}
+		//	Assert.AreEqual(dMin, oComp.Calculate());
+		//}
 
-		[Test]
-		public void IfThen()
-		{
-			string sTest;
-			if (m_a < m_b)
-				sTest = "if(a<b,c,d)";
-			else
-			{
-				if (m_a == m_b)
-					sTest = "if(a==b,c,d)";
-				else
-					sTest = "if(b<a,c,d)";
-			}
+		//[Test]
+		//public void IfThen()
+		//{
+		//	string sTest;
+		//	if (m_a < m_b)
+		//		sTest = "if(a<b,c,d)";
+		//	else
+		//	{
+		//		if (m_a == m_b)
+		//			sTest = "if(a==b,c,d)";
+		//		else
+		//			sTest = "if(b<a,c,d)";
+		//	}
 
 
-			EqCompiler oComp = GetCompilerSetup(sTest);
+		//	EqCompiler oComp = GetCompilerSetup(sTest);
 
-			Assert.AreEqual(m_c, oComp.Calculate());
-		}
+		//	Assert.AreEqual(m_c, oComp.Calculate());
+		//}
 
-		[Test]
-		public void IfElse()
-		{
-			string sTest;
-			if (m_a < m_b)
-				sTest = "if(a>b,c,d)";
-			else
-				sTest = "if(a<b,c,d)";
+		//[Test]
+		//public void IfElse()
+		//{
+		//	string sTest;
+		//	if (m_a < m_b)
+		//		sTest = "if(a>b,c,d)";
+		//	else
+		//		sTest = "if(a<b,c,d)";
 
-			EqCompiler oComp = GetCompilerSetup(sTest);
+		//	EqCompiler oComp = GetCompilerSetup(sTest);
 
-			Assert.AreEqual(m_d, oComp.Calculate());
-		}
+		//	Assert.AreEqual(m_d, oComp.Calculate());
+		//}
 	}
 }

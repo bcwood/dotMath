@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace dotMath
 {
 	/// <remarks>
 	/// Copyright (c) 2001-2004, Stephen Hebert
+	/// Copyright (c) 2014, Brandon Wood
 	/// All rights reserved.
 	/// 
 	/// 
@@ -49,41 +51,109 @@ namespace dotMath
 		private Parser.Token m_nextToken;
 		private IEnumerator m_enumTokens;
 		private SortedList m_slVariables = new SortedList();
-		private SortedList m_slFunctions = new SortedList();
-		private SortedList m_slOperations = new SortedList();
+		private Dictionary<string, COperator> _operators = new Dictionary<string, COperator>();
+		private Dictionary<string, CFunction> _functions = new Dictionary<string, CFunction>();
+		
+		/// <summary>
+		/// EqCompiler(string) constructor: creates the compiler object and sets the current function to the string passed
+		/// </summary>
+		/// <param name="sEquation"></param>
+		/// <param name="bIncludeStandardFunctions"></param>
+		public EqCompiler(string sEquation = null, bool bIncludeStandardFunctions = true)
+		{
+			SetFunction(sEquation);
+			InitOperators();
 
-		private COperator[] m_aOps;
-
-		#region Operations and Compiling Functions
+			if (bIncludeStandardFunctions)
+				InitFunctions();
+		}
 
 		/// <summary>
-		/// CSignNeg provides negative number functionality
-		/// within an equation. 
+		/// VariableCount property: This property reports the current
+		///		variable count.  It is valid after a 'Compile()' function is executed.
 		/// </summary>
-		private class CSignNeg : CValue
+		public int VariableCount { get { return m_slVariables.Count; } }
+
+		/// <summary>
+		/// SetVariable( string, double):  Sets the object mapped to the string variable name
+		///		to the double value passed.
+		/// </summary>
+		/// <param name="sVarName">Variable Name</param>
+		/// <param name="dValue">New Value for variable</param>
+		public void SetVariable(string sVarName, double dValue)
 		{
-			CValue m_oValue;
-
-			/// <summary>
-			/// CSignNeg constructor:  Grabs onto the assigned
-			///		CValue object and retains it for processing
-			///		requested operations.
-			/// </summary>
-			/// <param name="oValue">Child operation this object operates upon.</param>
-			public CSignNeg(CValue oValue)
-			{
-				m_oValue = oValue;
-			}
-
-			/// <summary>
-			/// GetValue():  Performs the negative operation on the child operation and returns the value.
-			/// </summary>
-			/// <returns>A double value evaluated and returned with the opposite sign.</returns>
-			public override double GetValue()
-			{
-				return m_oValue.GetValue() * -1;
-			}
+			CVariable oVar = GetVariableByName(sVarName);
+			oVar.SetValue(dValue);
 		}
+
+		/// <summary>
+		/// GetVariableList(): returns a string array containing all the variables that
+		///		have been found by the compiler.
+		/// </summary>
+		/// <returns>string array of current variable names</returns>
+		public string[] GetVariableList()
+		{
+			if (m_slVariables.Count == 0)
+				return null;
+
+			string[] asVars = new string[m_slVariables.Count];
+
+			IEnumerator enu = m_slVariables.GetKeyList().GetEnumerator();
+
+			string sValue = "";
+			int iPos = 0;
+
+			while (enu.MoveNext())
+			{
+				sValue = (string) enu.Current;
+
+				asVars[iPos] = sValue;
+				iPos++;
+			}
+
+			return asVars;
+		}
+
+		/// <summary>
+		/// SetFunction(string): Sets the current function to a passed string.
+		/// </summary>
+		/// <param name="sEquation">string representing the function being used</param>
+		public void SetFunction(string sEquation)
+		{
+			m_currentToken = null;
+			m_nextToken = null;
+
+			m_sEquation = sEquation;
+			m_Function = null;
+		}
+
+		/// <summary>
+		/// Compile():  This function kicks off the process to tokenize the function
+		///		and compile the resulting token set into a runnable form.
+		/// </summary>
+		public void Compile()
+		{
+			Parser oParser = new Parser(m_sEquation);
+			m_enumTokens = oParser.GetTokenEnumerator();
+
+			PositionNextToken();
+
+			m_Function = Relational();
+		}
+
+		/// <summary>
+		/// Calculate():  Calls into the runnable function set to evaluate the function and returns the result.
+		/// </summary>
+		/// <returns>double value evaluation of the function in its current state</returns>
+		public double Calculate()
+		{
+			if (m_Function == null)
+				Compile();
+
+			return m_Function.GetValue();
+		}
+
+		#region Operations and Compiling Functions
 
 		/// <summary>
 		/// Paren() : This method evaluates Parenthesis in the equation and
@@ -119,12 +189,10 @@ namespace dotMath
 					case Parser.CharType.CT_LETTER:
 						if (m_nextToken.ToString() == "(")
 						{
-							int iIdx = m_slFunctions.IndexOfKey(m_currentToken.ToString());
-
-							if (iIdx < 0)
+							if (!_functions.ContainsKey(m_currentToken.ToString()))
 								throw new ApplicationException("Function not found - " + m_currentToken.ToString());
 
-							CFunction oFunc = (CFunction) m_slFunctions.GetByIndex(iIdx);
+							CFunction oFunc = _functions[m_currentToken.ToString()];
 
 							ArrayList alValues = new ArrayList();
 
@@ -139,7 +207,8 @@ namespace dotMath
 
 							bFunc = true;
 
-							oValue = oFunc.CreateInstance(alValues);
+							oFunc.SetParameters(alValues);
+							oValue = oFunc;
 						}
 						else
 							oValue = GetVariableByName(m_currentToken.ToString());
@@ -292,13 +361,14 @@ namespace dotMath
 		/// <returns>CValue object representing an operation.</returns>
 		private CValue OpFactory(Parser.Token oSourceOp, CValue oValue1, CValue oValue2)
 		{
-			foreach (COperator oOp in m_aOps)
+			if (_operators.ContainsKey(oSourceOp.ToString()))
 			{
-				if (oOp.IsMatch(oSourceOp))
-					return oOp.Factory(oValue1, oValue2);
+				COperator oOp = _operators[oSourceOp.ToString()];
+				oOp.SetParameters(oValue1, oValue2);
+				return oOp;
 			}
 
-			throw new ApplicationException("Invalid operator in equation.");
+			throw new ApplicationException(string.Format("Invalid operator {0} in equation.", oSourceOp.ToString()));
 		}
 
 		#endregion
@@ -306,7 +376,7 @@ namespace dotMath
 		#region Core Base Classes
 
 		/// <summary>
-		/// CBalue class:  This base is the basic building block of
+		/// CValue class:  This base is the basic building block of
 		///		all operations, variables, functions, etc..  Any object
 		///		may call to a CValue object asking for it to resolve itself
 		///		and return it's processed value.
@@ -406,40 +476,58 @@ namespace dotMath
 		}
 
 		/// <summary>
+		/// CSignNeg provides negative number functionality
+		/// within an equation. 
+		/// </summary>
+		private class CSignNeg : CValue
+		{
+			CValue m_oValue;
+
+			/// <summary>
+			/// CSignNeg constructor:  Grabs onto the assigned
+			///		CValue object and retains it for processing
+			///		requested operations.
+			/// </summary>
+			/// <param name="oValue">Child operation this object operates upon.</param>
+			public CSignNeg(CValue oValue)
+			{
+				m_oValue = oValue;
+			}
+
+			/// <summary>
+			/// GetValue():  Performs the negative operation on the child operation and returns the value.
+			/// </summary>
+			/// <returns>A double value evaluated and returned with the opposite sign.</returns>
+			public override double GetValue()
+			{
+				return m_oValue.GetValue() * -1;
+			}
+		}
+
+		/// <summary>
 		/// COperator class: A CValue derived class responsible for identifying
 		///		and implementing operations during the parsing and evaluation processes.
 		/// </summary>
-		private abstract class COperator : CValue
+		private class COperator : CValue
 		{
-			/// <summary>
-			/// IsMatch(): accepts an operation token and identifies if the implemented
-			///		operator class is responsible for it.  This allows for multiple operators
-			///		to represent a given operation (i.e. != and <> both represent the "not-equal" case.
-			/// </summary>
-			/// <param name="tkn">Parser.Token containing the operator in question</param>
-			/// <returns>bool returning true if the object is reponsible for implementing the operator at hand.</returns>
-			public abstract bool IsMatch(Parser.Token tkn);
+			private Func<double, double, double> _function;
+			private CValue _param1;
+			private CValue _param2;
 
-			/// <summary>
-			/// Factory(CValue, CValue): responsible for providing an evaluation-time object that
-			///		holds onto the CValue objects it is responsible for operating on.
-			/// </summary>
-			/// <param name="arg1">First CValue object to operate on</param>
-			/// <param name="arg2">Second CValue object to operate on</param>
-			/// <returns>"Evaluation time" COperator object</returns>
-			public abstract COperator Factory(CValue arg1, CValue arg2);
-
-			/// <summary>
-			/// CheckParms( string, CValue, CValue): Helper function that verifies the two arguments
-			///		are non-null objects.  If not, an exception is thrown.
-			/// </summary>
-			/// <param name="sOp">string representing the operation.</param>
-			/// <param name="arg1">CValue object representing the first operation</param>
-			/// <param name="arg2">CValue object representing the second oepration</param>
-			protected void CheckParms(string sOp, CValue arg1, CValue arg2)
+			public COperator(Func<double, double, double> function)
 			{
-				if (arg1 == null || arg2 == null)
-					throw new ApplicationException("Missing expression on " + sOp + " operator.");
+				_function = function;
+			}
+
+			public void SetParameters(CValue param1, CValue param2)
+			{
+				_param1 = param1;
+				_param2 = param2;
+			}
+
+			public override double GetValue()
+			{
+				return _function(_param1.GetValue(), _param2.GetValue());
 			}
 		}
 
@@ -449,577 +537,24 @@ namespace dotMath
 		///		create and register functions with the compiler - thereby extending the compilers
 		///		syntax and functionality.
 		/// </summary>
-		public abstract class CFunction : CValue
+		public class CFunction : CValue
 		{
-			/// <summary>
-			/// GetFunction():  returns the function name as a string
-			/// </summary>
-			/// <returns>string</returns>
-			public abstract string GetFunction();
-
-			/// <summary>
-			/// SetValue():  Accepts an array of CValue objects that represent the parameters in
-			///		the function.
-			/// </summary>
-			/// <param name="alValues">ArrayList of CValue parameter objects.</param>
-			public abstract void SetValue(ArrayList alValues);
-
-			/// <summary>
-			/// CreateInstance( ArrayList ):  Requests that an evaluation-time object be created
-			///		that performs the operation on a set of CValue objects.
-			/// </summary>
-			/// <param name="alValues">ArrayList of CValue parameter objects.</param>
-			/// <returns>Returns a CFunction object that references parameters for evaluation purposes.</returns>
-			public abstract CFunction CreateInstance(ArrayList alValues);
-
-			/// <summary>
-			/// CheckParms(ArrayList, int): Helper function that accepts an array list and insures an appropriate 
-			///		number of CValue objects have been passed. If not, an ApplicationException is thrown.
-			/// </summary>
-			/// <param name="alValues">ArrayList of CValue-based objects representing parameters to the function</param>
-			/// <param name="iRequiredValueCount">integer: required parameter count</param>
-			protected void CheckParms(ArrayList alValues, int iRequiredValueCount)
+			private Func<double, double> _function;
+			private ArrayList _parameters;
+			
+			public CFunction(Func<double, double> function)
 			{
-				if (alValues.Count != iRequiredValueCount)
-				{
-					string sMsg = string.Format("Invalid parameter count. Function '" + GetFunction() + "' requires {0} parameter(s).", iRequiredValueCount);
-					throw new ApplicationException(sMsg);
-				}
+				_function = function;
 			}
 
-			/// <summary>
-			/// CheckParms(ArrayList, int, int): Helper function that accepts an array list and insures an appropriate
-			///		number (min and/or max) of CValue objects have been passed.  If not an ApplicationException is thrown.  
-			/// </summary>
-			/// <param name="alValues">ArrayList of CValue object that have been passed by the compiler.</param>
-			/// <param name="iMinReq">int value indicating a minimum number of parameters.  -1 if no minimum exists</param>
-			/// <param name="iMaxReq">int value indicating a maximum number of parameters.  -1 if no maximum exists</param>
-			protected void CheckParms(ArrayList alValues, int iMinReq, int iMaxReq)
+			public void SetParameters(ArrayList values)
 			{
-				if (iMinReq > -1)
-				{
-					if (iMinReq > alValues.Count)
-					{
-						string sMsg = string.Format("Invalid parameter count. Function '" + GetFunction() + "' requires a minimum of {0} parameter(s).", iMinReq);
-						throw new ApplicationException(sMsg);
-					}
-				}
-
-				if (iMaxReq > -1)
-				{
-					if (iMaxReq < alValues.Count)
-					{
-						string sMsg = string.Format("Invalid parameter count. Function '" + GetFunction() + "' is limited to a maximum of {0} parameter(s).", iMaxReq);
-						throw new ApplicationException(sMsg);
-					}
-				}
-			}
-		}
-
-		#endregion
-
-		#region Operators
-
-		/// <summary>
-		/// CAdd class: Implements the Add(+) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CAdd : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CAdd()
-			{
-			}
-
-			public CAdd(CValue arg1, CValue arg2)
-			{
-				CheckParms("+", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
+				_parameters = values;
 			}
 
 			public override double GetValue()
 			{
-				return m_arg1.GetValue() + m_arg2.GetValue();
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "+");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CAdd(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CSubtract class: Implements the Subtract(-) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CSubtract : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CSubtract()
-			{
-			}
-
-			public CSubtract(CValue arg1, CValue arg2)
-			{
-				CheckParms("-", arg1, arg2);
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				return m_arg1.GetValue() - m_arg2.GetValue();
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return tkn.ToString() == "-";
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CSubtract(arg1, arg2);
-			}
-		}
-
-
-		/// <summary>
-		/// CLessThan class: Implements the LessThan operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CLessThan : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CLessThan()
-			{
-			}
-
-			public CLessThan(CValue arg1, CValue arg2)
-			{
-				CheckParms("<", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() < m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "<");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CLessThan(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// COr class: Implements the boolean Or(||) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class COr : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public COr()
-			{
-			}
-
-			public COr(CValue arg1, CValue arg2)
-			{
-				CheckParms("||", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() != 0 || m_arg2.GetValue() != 0)
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "||");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new COr(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CAnd class: Implements the boolean And(&&) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CAnd : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CAnd()
-			{
-			}
-
-			public CAnd(CValue arg1, CValue arg2)
-			{
-				CheckParms("&&", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() != 0 && m_arg2.GetValue() != 0)
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "&&");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CAnd(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CEqual class: Implements the binary Equal(==) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CEqual : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CEqual()
-			{
-			}
-
-			public CEqual(CValue arg1, CValue arg2)
-			{
-				CheckParms("= or ==", arg1, arg2);
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() == m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "=" || tkn.ToString() == "==");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CEqual(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CNotEqual class: Implements the NotEqual(<>) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CNotEqual : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CNotEqual()
-			{
-			}
-
-			public CNotEqual(CValue arg1, CValue arg2)
-			{
-				CheckParms("<> or !=", arg1, arg2);
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() != m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "!=" || tkn.ToString() == "<>");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CNotEqual(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CGreaterThan class: Implements the Greater Than(>) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CGreaterThan : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CGreaterThan()
-			{
-			}
-
-			public CGreaterThan(CValue arg1, CValue arg2)
-			{
-				CheckParms(">", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() > m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == ">");
-			}
-
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CGreaterThan(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CGreaterThanEq class: Implements the Greater Than or Equal To(>=) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CGreaterThanEq : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CGreaterThanEq()
-			{
-			}
-
-			public CGreaterThanEq(CValue arg1, CValue arg2)
-			{
-				CheckParms(">=", arg1, arg2);
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() >= m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == ">=");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CGreaterThanEq(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CLessThanEq class: Implements the Less Than or Equal To(<=) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CLessThanEq : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CLessThanEq()
-			{
-			}
-
-			public CLessThanEq(CValue arg1, CValue arg2)
-			{
-				CheckParms("<=", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				if (m_arg1.GetValue() <= m_arg2.GetValue())
-					return 1;
-				else
-					return 0;
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "<=");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CLessThanEq(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CMultiply class: Implements the Multiplication(*) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CMultiply : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CMultiply()
-			{
-			}
-
-			public CMultiply(CValue arg1, CValue arg2)
-			{
-				CheckParms("*", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				return m_arg1.GetValue() * m_arg2.GetValue();
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "*");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CMultiply(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CDivide class: Implements the Division(/) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CDivide : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CDivide()
-			{
-			}
-
-			public CDivide(CValue arg1, CValue arg2)
-			{
-				CheckParms("/", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				return m_arg1.GetValue() / m_arg2.GetValue();
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "/");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CDivide(arg1, arg2);
-			}
-		}
-
-		/// <summary>
-		/// CPower class: Implements the Power(^) operation. Refer to COperator base class
-		///		for a description of the methods.
-		/// </summary>
-		private class CPower : COperator
-		{
-			private CValue m_arg1 = null;
-			private CValue m_arg2 = null;
-
-			public CPower()
-			{
-			}
-
-			public CPower(CValue arg1, CValue arg2)
-			{
-				CheckParms("^", arg1, arg2);
-
-				m_arg1 = arg1;
-				m_arg2 = arg2;
-			}
-
-			public override double GetValue()
-			{
-				return Math.Pow(m_arg1.GetValue(), m_arg2.GetValue());
-			}
-
-			public override bool IsMatch(Parser.Token tkn)
-			{
-				return (tkn.ToString() == "^");
-			}
-
-			public override COperator Factory(CValue arg1, CValue arg2)
-			{
-				return new CPower(arg1, arg2);
+				return _function(((CValue) _parameters[0]).GetValue());
 			}
 		}
 
@@ -1052,23 +587,54 @@ namespace dotMath
 		}
 
 		/// <summary>
-		/// InitFunctions(): Creates all operation functions recognized by the compiler.
+		/// Creates all operation functions recognized by the compiler.
+		/// </summary>
+		private void InitOperators()
+		{
+			_operators.Add("+", new COperator((x, y) => x + y));
+			_operators.Add("-", new COperator((x, y) => x - y));
+			_operators.Add("*", new COperator((x, y) => x * y));
+			_operators.Add("/", new COperator((x, y) => x / y));
+			_operators.Add("%", new COperator((x, y) => x % y));
+			_operators.Add("^", new COperator((x, y) => Math.Pow(x, y)));
+			_operators.Add(">", new COperator((x, y) => { if (x > y) return 1; else return 0; }));
+			_operators.Add(">=", new COperator((x, y) => { if (x >= y) return 1; else return 0; }));
+			_operators.Add("<", new COperator((x, y) => { if (x < y) return 1; else return 0; }));
+			_operators.Add("<=", new COperator((x, y) => { if (x <= y) return 1; else return 0; }));
+			_operators.Add("=", new COperator((x, y) => { if (x == y) return 1; else return 0; }));
+			_operators.Add("==", new COperator((x, y) => { if (x == y) return 1; else return 0; }));
+			_operators.Add("<>", new COperator((x, y) => { if (x != y) return 1; else return 0; }));
+			_operators.Add("!=", new COperator((x, y) => { if (x != y) return 1; else return 0; }));
+		}
+
+		/// <summary>
+		/// Creates all functions recognized by the compiler.
 		/// </summary>
 		private void InitFunctions()
 		{
-			m_aOps = new COperator[11];
+			_functions.Add("abs", new CFunction(x => Math.Abs(x)));
+			_functions.Add("acos", new CFunction(x => Math.Acos(x)));
+			_functions.Add("asin", new CFunction(x => Math.Asin(x)));
+			_functions.Add("atan", new CFunction(x => Math.Atan(x)));
+			_functions.Add("ceiling", new CFunction(x => Math.Ceiling(x)));
+			_functions.Add("cos", new CFunction(x => Math.Cos(x)));
+			_functions.Add("cosh", new CFunction(x => Math.Cosh(x)));
+			_functions.Add("exp", new CFunction(x => Math.Exp(x)));
+			_functions.Add("floor", new CFunction(x => Math.Floor(x)));
+			_functions.Add("log", new CFunction(x => Math.Log(x)));
+			_functions.Add("log10", new CFunction(x => Math.Log10(x)));
+			_functions.Add("round", new CFunction(x => Math.Round(x)));
+			_functions.Add("sign", new CFunction(x => Math.Sign(x)));
+			_functions.Add("sin", new CFunction(x => Math.Sin(x)));
+			_functions.Add("sinh", new CFunction(x => Math.Sinh(x)));
+			_functions.Add("sqrt", new CFunction(x => Math.Sqrt(x)));
+			_functions.Add("tan", new CFunction(x => Math.Tan(x)));
+			_functions.Add("tanh", new CFunction(x => Math.Tanh(x)));
 
-			m_aOps[0] = new CAdd();
-			m_aOps[1] = new CSubtract();
-			m_aOps[2] = new CMultiply();
-			m_aOps[3] = new CDivide();
-			m_aOps[4] = new CGreaterThan();
-			m_aOps[5] = new CGreaterThanEq();
-			m_aOps[6] = new CLessThan();
-			m_aOps[7] = new CLessThanEq();
-			m_aOps[8] = new CEqual();
-			m_aOps[9] = new CNotEqual();
-			m_aOps[10] = new CPower();
+			// TODO
+			//eq.AddFunction("max", (x, y) => Math.Max(x, y));
+			//eq.AddFunction("min", (x, y) => Math.Min(x, y));
+			//eq.AddFunction("if", (x, y, z) => if (x) return y; else return z;);
 		}
 
 		/// <summary>
@@ -1117,124 +683,5 @@ namespace dotMath
 		}
 
 		#endregion
-
-		/// <summary>
-		/// VariableCount property: This property reports the current
-		///		variable count.  It is valid after a 'Compile()' function is executed.
-		/// </summary>
-		public int VariableCount { get { return m_slVariables.Count; } }
-
-		/// <summary>
-		/// SetVariable( string, double):  Sets the object mapped to the string variable name
-		///		to the double value passed.
-		/// </summary>
-		/// <param name="sVarName">Variable Name</param>
-		/// <param name="dValue">New Value for variable</param>
-		public void SetVariable(string sVarName, double dValue)
-		{
-			CVariable oVar = GetVariableByName(sVarName);
-			oVar.SetValue(dValue);
-		}
-
-		/// <summary>
-		/// GetVariableList(): returns a string array containing all the variables that
-		///		have been found by the compiler.
-		/// </summary>
-		/// <returns>string array of current variable names</returns>
-		public string[] GetVariableList()
-		{
-			if (m_slVariables.Count == 0)
-				return null;
-
-			string[] asVars = new string[m_slVariables.Count];
-
-			IEnumerator enu = m_slVariables.GetKeyList().GetEnumerator();
-
-			string sValue = "";
-			int iPos = 0;
-
-			while (enu.MoveNext())
-			{
-				sValue = (string) enu.Current;
-
-				asVars[iPos] = sValue;
-				iPos++;
-			}
-
-			return asVars;
-		}
-
-		/// <summary>
-		/// EqCompiler() constructor: creates the compiler object with an empty function that returns '0' if evaluated.
-		/// </summary>
-		public EqCompiler(bool bIncludeStandardFunctions)
-		{
-			SetFunction("0");
-
-			if (bIncludeStandardFunctions)
-				CFunctionLibrary.AddFunctions(this);
-		}
-
-		/// <summary>
-		/// EqCompiler(string) constructor: creates the compiler object and sets the current function to the string passed
-		/// </summary>
-		/// <param name="sEquation"></param>
-		public EqCompiler(string sEquation, bool bIncludeStandardFunctions)
-		{
-			SetFunction(sEquation);
-
-			if (bIncludeStandardFunctions)
-				CFunctionLibrary.AddFunctions(this);
-		}
-
-		/// <summary>
-		/// SetFunction(string): Sets the current function to a passed string.
-		/// </summary>
-		/// <param name="sEquation">string representing the function being used</param>
-		public void SetFunction(string sEquation)
-		{
-			m_currentToken = null;
-			m_nextToken = null;
-
-			m_sEquation = sEquation;
-			m_Function = null;
-			InitFunctions();
-		}
-
-		/// <summary>
-		/// Compile():  This function kicks off the process to tokenize the function
-		///		and compile the resulting token set into a runnable form.
-		/// </summary>
-		public void Compile()
-		{
-			Parser oParser = new Parser(m_sEquation);
-			m_enumTokens = oParser.GetTokenEnumerator();
-
-			PositionNextToken();
-
-			m_Function = Relational();
-		}
-		
-		/// <summary>
-		/// Calculate():  Calls into the runnable function set to evaluate the function and returns the result.
-		/// </summary>
-		/// <returns>double value evaluation of the function in its current state</returns>
-		public double Calculate()
-		{
-			if (m_Function == null)
-				Compile();
-
-			return m_Function.GetValue();
-		}
-
-		/// <summary>
-		/// AddFunction(CFunction): This member accepts a function object and
-		///		adds it to the compilers set of functions.
-		/// </summary>
-		/// <param name="oFunc">CFunction object that implements a functionality extension for the compiler.</param>
-		public void AddFunction(CFunction oFunc)
-		{
-			m_slFunctions.Add(oFunc.GetFunction(), oFunc);
-		}
 	}
 }
