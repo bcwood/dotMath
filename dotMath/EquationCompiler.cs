@@ -236,19 +236,40 @@ namespace dotMath
 		}
 
 		/// <summary>
+		/// Detects the modulo operator (%)
+		/// </summary>
+		/// <returns>CValue object representing an operation.</returns>
+		private CValue Modulo()
+		{
+			CValue value = Power();
+
+			while (_currentToken == "%")
+			{
+				Token token = _currentToken;
+				NextToken();
+
+				CValue nextValue = Power();
+				ValidateParameters(token, value, nextValue);
+				value = GetOperator(token, value, nextValue);
+			}
+
+			return value;
+		}
+
+		/// <summary>
 		/// Detects the operation to perform multiplication or division.
 		/// </summary>
 		/// <returns>CValue object representing an operation.</returns>
 		private CValue MultDiv()
 		{
-			CValue value = Power();
+			CValue value = Modulo();
 
 			while (_currentToken == "*" || _currentToken == "/")
 			{
 				Token token = _currentToken;
 				NextToken();
 
-				CValue nextValue = Power();
+				CValue nextValue = Modulo();
 				ValidateParameters(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
@@ -379,29 +400,47 @@ namespace dotMath
 		/// </summary>
 		private void InitFunctions()
 		{
-			_functions.Add("abs", new CFunction(x => Math.Abs(x)));
-			_functions.Add("acos", new CFunction(x => Math.Acos(x)));
-			_functions.Add("asin", new CFunction(x => Math.Asin(x)));
-			_functions.Add("atan", new CFunction(x => Math.Atan(x)));
-			_functions.Add("ceiling", new CFunction(x => Math.Ceiling(x)));
-			_functions.Add("cos", new CFunction(x => Math.Cos(x)));
-			_functions.Add("cosh", new CFunction(x => Math.Cosh(x)));
-			_functions.Add("exp", new CFunction(x => Math.Exp(x)));
-			_functions.Add("floor", new CFunction(x => Math.Floor(x)));
-			_functions.Add("log", new CFunction(x => Math.Log(x)));
-			_functions.Add("log10", new CFunction(x => Math.Log10(x)));
-			_functions.Add("round", new CFunction(x => Math.Round(x)));
-			_functions.Add("sign", new CFunction(x => Math.Sign(x)));
-			_functions.Add("sin", new CFunction(x => Math.Sin(x)));
-			_functions.Add("sinh", new CFunction(x => Math.Sinh(x)));
-			_functions.Add("sqrt", new CFunction(x => Math.Sqrt(x)));
-			_functions.Add("tan", new CFunction(x => Math.Tan(x)));
-			_functions.Add("tanh", new CFunction(x => Math.Tanh(x)));
+			this.AddFunction("abs", x => Math.Abs(x));
+			this.AddFunction("acos", x => Math.Acos(x));
+			this.AddFunction("asin", x => Math.Asin(x));
+			this.AddFunction("atan", x => Math.Atan(x));
+			this.AddFunction("ceiling", x => Math.Ceiling(x));
+			this.AddFunction("cos", x => Math.Cos(x));
+			this.AddFunction("cosh", x => Math.Cosh(x));
+			this.AddFunction("exp", x => Math.Exp(x));
+			this.AddFunction("floor", x => Math.Floor(x));
+			this.AddFunction("log", x => Math.Log(x));
+			this.AddFunction("log10", x => Math.Log10(x));
+			this.AddFunction("round", x => Math.Round(x));
+			this.AddFunction("sign", x => Math.Sign(x));
+			this.AddFunction("sin", x => Math.Sin(x));
+			this.AddFunction("sinh", x => Math.Sinh(x));
+			this.AddFunction("sqrt", x => Math.Sqrt(x));
+			this.AddFunction("tan", x => Math.Tan(x));
+			this.AddFunction("tanh", x => Math.Tanh(x));
 
-			// TODO
-			//eq.AddFunction("max", (x, y) => Math.Max(x, y));
-			//eq.AddFunction("min", (x, y) => Math.Min(x, y));
-			//eq.AddFunction("if", (x, y, z) => if (x) return y; else return z;);
+			this.AddFunction("max", (x, y) => Math.Max(x, y));
+			this.AddFunction("min", (x, y) => Math.Min(x, y));
+			this.AddFunction("if", (x, y, z) =>
+				                       {
+					                       if (x) return y;
+					                       else return z;
+				                       });
+		}
+
+		public void AddFunction(string name, Func<double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
+		}
+
+		public void AddFunction(string name, Func<double, double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
+		}
+
+		public void AddFunction(string name, Func<bool, double, double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
 		}
 
 		/// <summary>

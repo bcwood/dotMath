@@ -100,9 +100,9 @@
 		public static TokenType GetTypeByChar(char c)
 		{
 			const string WHITESPACE = " \t";
-			const string DELIMITERS = "+-*/^()<>=&|!,";
+			const string DELIMITERS = "+-*/^%()<>=&|!,";
 			const string NUMBERS = ".0123456789";
-			const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%_";
+			const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
 			const string BRACKETS = "[]";
 
 			if (WHITESPACE.IndexOf(c) >= 0)

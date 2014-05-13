@@ -99,13 +99,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunctionTests.cs" />
+    <Compile Include="OperatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="StaticOutputTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="VariableOutputTests.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -149,10 +149,20 @@ namespace dotMath.Core
 	/// </summary>
 	internal class CFunction : CValue
 	{
-		private Func<double, double> _function;
+		private object _function;
 		private ArrayList _parameters;
 
 		public CFunction(Func<double, double> function)
+		{
+			_function = function;
+		}
+
+		public CFunction(Func<double, double, double> function)
+		{
+			_function = function;
+		}
+
+		public CFunction(Func<bool, double, double, double> function)
 		{
 			_function = function;
 		}
@@ -164,7 +174,14 @@ namespace dotMath.Core
 
 		public override double GetValue()
 		{
-			return _function(((CValue) _parameters[0]).GetValue());
+			if (_parameters.Count == 1)
+				return (_function as Func<double, double>)(((CValue) _parameters[0]).GetValue());
+			else if (_parameters.Count == 2)
+				return (_function as Func<double, double, double>)(((CValue) _parameters[0]).GetValue(), ((CValue) _parameters[1]).GetValue());
+			else if (_parameters.Count == 3)
+				return (_function as Func<bool, double, double, double>)(Convert.ToBoolean(((CValue) _parameters[0]).GetValue()), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
+
+			throw new ApplicationException("Unexpected number of function parameters: " + _parameters.Count);
 		}
 	}
 }
