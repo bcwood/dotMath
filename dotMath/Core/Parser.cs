@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 
 namespace dotMath.Core
@@ -45,12 +44,6 @@ namespace dotMath.Core
 		private string _function;
 		private ArrayList _tokens;
 
-		//private string m_sWhitespace = " \t";
-		//private string m_sDelimiters = "+-*/^()<>=&|!,";
-		//private string m_sNumbers = ".0123456789";
-		//private string m_sLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%_";
-		//private string m_sBrackets = "[]";
-		
 		/// <summary>
 		/// Takes an expression and launches the parsing process.
 		/// </summary>
@@ -149,24 +142,24 @@ namespace dotMath.Core
 		/// </summary>
 		private void CheckMultiCharOps()
 		{
-			ArrayList alTokens = new ArrayList();
-			IEnumerator iEnum = GetTokenEnumerator();
-			Token nextToken1 = null;
-			Token nextToken2 = null;
+			ArrayList tokens = new ArrayList();
+			IEnumerator tokenEnumerator = GetTokenEnumerator();
+			Token token1 = null;
+			Token token2 = null;
 
-			if (iEnum.MoveNext())
-				nextToken1 = (Token) iEnum.Current;
+			if (tokenEnumerator.MoveNext())
+				token1 = (Token) tokenEnumerator.Current;
 
-			if (iEnum.MoveNext())
-				nextToken2 = (Token) iEnum.Current;
+			if (tokenEnumerator.MoveNext())
+				token2 = (Token) tokenEnumerator.Current;
 
-			while (nextToken1 != null)
+			while (token1 != null)
 			{
-				if (nextToken1.TokenType == TokenType.Delimeter)
+				if (token1.TokenType == TokenType.Delimeter)
 				{
-					if (nextToken2 != null && nextToken2.TokenType == TokenType.Delimeter)
+					if (token2 != null && token2.TokenType == TokenType.Delimeter)
 					{
-						string s1 = nextToken1.ToString() + nextToken2.ToString();
+						string s1 = token1.ToString() + token2.ToString();
 
 						if (s1 == "&&" ||
 							s1 == "||" ||
@@ -176,30 +169,30 @@ namespace dotMath.Core
 							s1 == "<>" ||
 							s1 == "==")
 						{
-							nextToken1 = new Token(s1, TokenType.Delimeter);
+							token1 = new Token(s1, TokenType.Delimeter);
 							
-							if (iEnum.MoveNext())
-								nextToken2 = (Token) iEnum.Current;
+							if (tokenEnumerator.MoveNext())
+								token2 = (Token) tokenEnumerator.Current;
 						}
 					}
 				}
 
-				alTokens.Add(nextToken1);
+				tokens.Add(token1);
 
-				nextToken1 = nextToken2;
+				token1 = token2;
 
-				if (nextToken2 != null)
+				if (token2 != null)
 				{
-					if (iEnum.MoveNext())
-						nextToken2 = (Token) iEnum.Current;
+					if (tokenEnumerator.MoveNext())
+						token2 = (Token) tokenEnumerator.Current;
 					else
-						nextToken2 = null;
+						token2 = null;
 				}
 				else
-					nextToken1 = null;
+					token1 = null;
 			}
 
-			_tokens = alTokens;
+			_tokens = tokens;
 		}
 	}
 }
