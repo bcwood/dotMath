@@ -39,7 +39,7 @@ namespace dotMath.Tests
 		[Test]
 		public void SignNeg()
 		{
-			EqCompiler oComp = new EqCompiler("-4.2", false);
+			EqCompiler oComp = new EqCompiler("-4.2");
 
 			Assert.AreEqual(-4.2, oComp.Calculate());
 		}
@@ -47,7 +47,7 @@ namespace dotMath.Tests
 		[Test]
 		public void DivideByZero()
 		{
-			EqCompiler oComp = new EqCompiler("4/0", false);
+			EqCompiler oComp = new EqCompiler("4/0");
 
 			double dValue1 = 4;
 			double dValue2 = 0;
@@ -58,7 +58,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Addition()
 		{
-			EqCompiler oComp = new EqCompiler("2+2", false);
+			EqCompiler oComp = new EqCompiler("2+2");
 
 			Assert.AreEqual(2 + 2, oComp.Calculate());
 		}
@@ -66,7 +66,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Multiplication()
 		{
-			EqCompiler oComp = new EqCompiler("4*4", false);
+			EqCompiler oComp = new EqCompiler("4*4");
 
 			Assert.AreEqual(4 * 4, oComp.Calculate());
 		}
@@ -74,7 +74,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Division()
 		{
-			EqCompiler oComp = new EqCompiler("16/2", false);
+			EqCompiler oComp = new EqCompiler("16/2");
 
 			Assert.AreEqual(16 / 2, oComp.Calculate());
 		}
@@ -82,7 +82,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Subtraction()
 		{
-			EqCompiler oComp = new EqCompiler("10-2", false);
+			EqCompiler oComp = new EqCompiler("10-2");
 
 			Assert.AreEqual(10 - 2, oComp.Calculate());
 		}
@@ -90,7 +90,7 @@ namespace dotMath.Tests
 		[Test]
 		public void Exponent()
 		{
-			EqCompiler oComp = new EqCompiler("8^2", false);
+			EqCompiler oComp = new EqCompiler("8^2");
 
 			Assert.AreEqual(Math.Pow(8, 2), oComp.Calculate());
 		}
