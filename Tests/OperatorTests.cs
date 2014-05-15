@@ -47,6 +47,22 @@ namespace dotMath.Tests
 			Assert.AreEqual(a - b, compiler.Calculate());
 		}
 
+		[Test]
+		public void Sign()
+		{
+			var compiler = new EquationCompiler("4 + -3");
+			Assert.AreEqual(4 + -3, compiler.Calculate());
+
+			compiler.SetFunction("4+-3");
+			Assert.AreEqual(4 + -3, compiler.Calculate());
+
+			compiler.SetFunction("4 - -3");
+			Assert.AreEqual(4 - -3, compiler.Calculate());
+
+			compiler.SetFunction("4--3");
+			Assert.AreEqual(4 - -3, compiler.Calculate());
+		}
+
 		[TestCase(4, 2)]
 		[TestCase(4, 0.5)]
 		public void Multiplication(double a, double b)
@@ -165,6 +181,23 @@ namespace dotMath.Tests
 			compiler.SetVariable("b", b);
 
 			Assert.AreEqual(a != b, Convert.ToBoolean(compiler.Calculate()));
+		}
+
+		[Test]
+		public void OrderOfOperations()
+		{
+			var compiler = new EquationCompiler("3 + 4 / 2");
+			Assert.AreEqual(3 + 4 / 2.0, compiler.Calculate());
+
+			compiler.SetFunction("(3 + 4) / 2");
+			Assert.AreEqual((3 + 4) / 2.0, compiler.Calculate());
+		}
+
+		[Test]
+		public void InvalidOperator()
+		{
+			var compiler = new EquationCompiler("4!2");
+			Assert.Throws<ApplicationException>(() => compiler.Calculate());
 		}
 	}
 }

@@ -7,174 +7,174 @@ namespace dotMath.Tests
 	public class FunctionTests
 	{
 		[TestCase(-5)]
-		public void Abs(double value)
+		public void Abs(double a)
 		{
 			var compiler = new EquationCompiler("abs(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Abs(value), compiler.Calculate());
+			Assert.AreEqual(Math.Abs(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Acos(double value)
+		public void Acos(double a)
 		{
 			var compiler = new EquationCompiler("acos(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Acos(value), compiler.Calculate());
+			Assert.AreEqual(Math.Acos(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Asin(double value)
+		public void Asin(double a)
 		{
 			var compiler = new EquationCompiler("asin(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Asin(value), compiler.Calculate());
+			Assert.AreEqual(Math.Asin(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Atan(double value)
+		public void Atan(double a)
 		{
 			var compiler = new EquationCompiler("atan(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Atan(value), compiler.Calculate());
+			Assert.AreEqual(Math.Atan(a), compiler.Calculate());
 		}
 
 		[TestCase(-4.2)]
-		public void Ceiling(double value)
+		public void Ceiling(double a)
 		{
 			var compiler = new EquationCompiler("ceiling(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Ceiling(value), compiler.Calculate());
+			Assert.AreEqual(Math.Ceiling(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Cos(double value)
+		public void Cos(double a)
 		{
 			var compiler = new EquationCompiler("cos(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Cos(value), compiler.Calculate());
+			Assert.AreEqual(Math.Cos(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Cosh(double value)
+		public void Cosh(double a)
 		{
 			var compiler = new EquationCompiler("cosh(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Cosh(value), compiler.Calculate());
+			Assert.AreEqual(Math.Cosh(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Exp(double value)
+		public void Exp(double a)
 		{
 			var compiler = new EquationCompiler("exp(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Exp(value), compiler.Calculate());
+			Assert.AreEqual(Math.Exp(a), compiler.Calculate());
 		}
 
 		[TestCase(-4.2)]
-		public void Floor(double value)
+		public void Floor(double a)
 		{
 			var compiler = new EquationCompiler("floor(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Floor(value), compiler.Calculate());
+			Assert.AreEqual(Math.Floor(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Log(double value)
+		public void Log(double a)
 		{
 			var compiler = new EquationCompiler("log(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Log(value), compiler.Calculate());
+			Assert.AreEqual(Math.Log(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Log10(double value)
+		public void Log10(double a)
 		{
 			var compiler = new EquationCompiler("log10(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Log10(value), compiler.Calculate());
+			Assert.AreEqual(Math.Log10(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Round(double value)
+		public void Round(double a)
 		{
 			var compiler = new EquationCompiler("round(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Round(value), compiler.Calculate());
+			Assert.AreEqual(Math.Round(a), compiler.Calculate());
 		}
 
 		[TestCase(-4.2)]
-		public void Sign(double value)
+		public void Sign(double a)
 		{
 			var compiler = new EquationCompiler("sign(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Sign(value), compiler.Calculate());
+			Assert.AreEqual(Math.Sign(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Sin(double value)
+		public void Sin(double a)
 		{
 			var compiler = new EquationCompiler("sin(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Sin(value), compiler.Calculate());
+			Assert.AreEqual(Math.Sin(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Sinh(double value)
+		public void Sinh(double a)
 		{
 			var compiler = new EquationCompiler("sinh(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Sinh(value), compiler.Calculate());
+			Assert.AreEqual(Math.Sinh(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Sqrt(double value)
+		public void Sqrt(double a)
 		{
 			var compiler = new EquationCompiler("sqrt(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Sqrt(value), compiler.Calculate());
+			Assert.AreEqual(Math.Sqrt(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Tan(double value)
+		public void Tan(double a)
 		{
 			var compiler = new EquationCompiler("tan(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Tan(value), compiler.Calculate());
+			Assert.AreEqual(Math.Tan(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void Tanh(double value)
+		public void Tanh(double a)
 		{
 			var compiler = new EquationCompiler("tanh(a)");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Tanh(value), compiler.Calculate());
+			Assert.AreEqual(Math.Tanh(a), compiler.Calculate());
 		}
 
 		[TestCase(4.2)]
-		public void NestedFunctions(double value)
+		public void NestedFunctions(double a)
 		{
 			var compiler = new EquationCompiler("sin(cos(tan(a)))");
-			compiler.SetVariable("a", value);
+			compiler.SetVariable("a", a);
 
-			Assert.AreEqual(Math.Sin(Math.Cos(Math.Tan(value))), compiler.Calculate());
+			Assert.AreEqual(Math.Sin(Math.Cos(Math.Tan(a))), compiler.Calculate());
 		}
 
 		[Test]
@@ -201,6 +201,18 @@ namespace dotMath.Tests
 				Tanh(x);
 				NestedFunctions(x);
 			}
+		}
+
+		[TestCase(1.5, 2.25, 3.3)]
+		[TestCase(-1.5, -2.25, -3.3)]
+		public void MultipleFunctions(double a, double b, double c)
+		{
+			var compiler = new EquationCompiler("sin(a) + cos(b) - tan(c)");
+			compiler.SetVariable("a", a);
+			compiler.SetVariable("b", b);
+			compiler.SetVariable("c", c);
+
+			Assert.AreEqual(Math.Sin(a) + Math.Cos(b) - Math.Tan(c), compiler.Calculate());
 		}
 
 		[TestCase(4, 2)]
@@ -264,6 +276,21 @@ namespace dotMath.Tests
 				                               });
 			
 			Assert.AreEqual(5 * 4 * 3 * 2 * 1, compiler.Calculate());
+		}
+
+		[TestCase("abs(-5")]
+		[TestCase("abs(-5))")]
+		public void UnmatchedParen(string function)
+		{
+			var compiler = new EquationCompiler(function);
+			Assert.Throws<ApplicationException>(() => compiler.Calculate());
+		}
+
+		[Test]
+		public void InvalidFunction()
+		{
+			var compiler = new EquationCompiler("foo(5)");
+			Assert.Throws<ApplicationException>(() => compiler.Calculate());
 		}
 	}
 }

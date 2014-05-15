@@ -49,7 +49,7 @@ namespace dotMath
 		private CValue _function;
 		private Token _currentToken;
 		private Token _nextToken;
-		private IEnumerator tokenEnumerator;
+		private IEnumerator _tokenEnumerator;
 		private Dictionary<string, CVariable> _variables = new Dictionary<string, CVariable>();
 		private Dictionary<string, COperator> _operators = new Dictionary<string, COperator>();
 		private Dictionary<string, CFunction> _functions = new Dictionary<string, CFunction>();
@@ -100,7 +100,7 @@ namespace dotMath
 		public void Compile()
 		{
 			var parser = new Parser(_equation);
-			tokenEnumerator = parser.GetTokenEnumerator();
+			_tokenEnumerator = parser.GetTokenEnumerator();
 
 			NextToken();
 
@@ -115,6 +115,9 @@ namespace dotMath
 		{
 			if (_function == null)
 				Compile();
+
+			if (_nextToken != null)
+				throw new ApplicationException("Unrecognized token: " + _currentToken.ToString());
 
 			return _function.GetValue();
 		}
@@ -137,10 +140,10 @@ namespace dotMath
 
 				value = Relational();
 
-				if (_currentToken.ToString() == ",")
+				if (string.Equals(_currentToken, ","))
 					return value;
 
-				if (_currentToken.ToString() != ")")
+				if (!string.Equals(_currentToken, ")"))
 					throw new ApplicationException("Unmatched parenthesis in equation.");
 			}
 			else
@@ -152,7 +155,7 @@ namespace dotMath
 						break;
 
 					case TokenType.Letter:
-						if (_nextToken.ToString() == "(")
+						if (string.Equals(_nextToken, "("))
 						{
 							if (!_functions.ContainsKey(_currentToken.ToString()))
 								throw new ApplicationException(string.Format("Function '{0}' not found.", _currentToken.ToString()));
@@ -167,7 +170,7 @@ namespace dotMath
 
 								parameters.Add(value);
 							}
-							while (_currentToken.ToString() == ",");
+							while (string.Equals(_currentToken, ","));
 
 							isFunction = true;
 
@@ -450,20 +453,19 @@ namespace dotMath
 		{
 			if (_currentToken == null)
 			{
-				if (!tokenEnumerator.MoveNext())
+				if (!_tokenEnumerator.MoveNext())
 					throw new ApplicationException("Invalid equation.");
 
-				_nextToken = (Token) tokenEnumerator.Current;
+				_nextToken = (Token) _tokenEnumerator.Current;
 			}
 
 			_currentToken = _nextToken;
 
-			if (tokenEnumerator.MoveNext())
-				_nextToken = (Token) tokenEnumerator.Current;
+			if (_tokenEnumerator.MoveNext())
+				_nextToken = (Token) _tokenEnumerator.Current;
 			else
-				_nextToken = new Token();
+				_nextToken = null;
 		}
-
 
 		/// <summary>
 		/// Returns the variable associated with the provided name string.
@@ -472,9 +474,6 @@ namespace dotMath
 		/// <returns>CVariable object mapped to the passed variable name</returns>
 		private CVariable GetVariableByName(string name)
 		{
-			if (_variables == null)
-				_variables = new Dictionary<string, CVariable>();
-
 			if (_variables.ContainsKey(name))
 				return _variables[name];
 
