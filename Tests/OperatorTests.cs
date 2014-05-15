@@ -202,5 +202,12 @@ namespace dotMath.Tests
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<InvalidEquationException>(() => compiler.Calculate());
 		}
+
+		[Test]
+		public void NullArgument_ThrowsInvalidEquationException()
+		{
+			var compiler = new EquationCompiler("4+");
+			Assert.Throws<InvalidEquationException>(() => compiler.Calculate());
+		}
 	}
 }

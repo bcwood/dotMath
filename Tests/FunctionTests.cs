@@ -296,18 +296,16 @@ namespace dotMath.Tests
 
 		[TestCase("abs()")]
 		[TestCase("abs(1,2)")]
+		[TestCase("min(1)")]
+		[TestCase("min(1,)")]
+		[TestCase("min(,2)")]
 		[TestCase("min(1,2,3)")]
+		[TestCase("if(1>2,,3)")]
+		[TestCase("if(1>2,3,)")]
 		public void InvalidArgumentCount_ThrowsArgumentCountException(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<ArgumentCountException>(() => compiler.Calculate());
-		}
-
-		[Test]
-		public void NullArgument_ThrowsArgumentNullException()
-		{
-			var compiler = new EquationCompiler("min(1,)");
-			Assert.Throws<ArgumentNullException>(() => compiler.Calculate());
 		}
 	}
 }

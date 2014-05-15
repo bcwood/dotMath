@@ -67,11 +67,6 @@ namespace dotMath
 		}
 
 		/// <summary>
-		/// Reports the current variable count.  It is valid after a 'Compile()' function is executed.
-		/// </summary>
-		public int VariableCount { get { return _variables.Count; } }
-
-		/// <summary>
 		/// Sets the object mapped to the string variable name to the double value passed.
 		/// </summary>
 		/// <param name="name">Variable Name</param>
@@ -130,7 +125,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<double, double> function)
 		{
-			_functions.Add(name, new CFunction(name, function));
+			_functions.Add(name, new CFunction(function));
 		}
 
 		/// <summary>
@@ -140,7 +135,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<double, double, double> function)
 		{
-			_functions.Add(name, new CFunction(name, function));
+			_functions.Add(name, new CFunction(function));
 		}
 
 		/// <summary>
@@ -150,7 +145,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<bool, double, double, double> function)
 		{
-			_functions.Add(name, new CFunction(name, function));
+			_functions.Add(name, new CFunction(function));
 		}
 
 		#region Operations and Compiling Functions
@@ -164,6 +159,9 @@ namespace dotMath
 		{
 			bool isFunction = false;
 			CValue value = null;
+
+			if (_currentToken == null)
+				throw new InvalidEquationException("Unexpected end of equation (are you missing an operator argument?).");
 
 			if (_currentToken.ToString() == "(")
 			{
@@ -245,10 +243,7 @@ namespace dotMath
 			CValue function = Paren();
 			
 			if (isNegative)
-			{
-				ValidateArguments(token, function);
 				function = new CSignNeg(function);
-			}
 
 			return function;
 		}
@@ -267,7 +262,6 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Sign();
-				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -288,7 +282,6 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Power();
-				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -309,7 +302,6 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Modulo();
-				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -330,7 +322,6 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = MultDiv();
-				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -359,7 +350,6 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Relational();
-				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -383,37 +373,12 @@ namespace dotMath
 				return op;
 			}
 
-			throw new InvalidOperatorException(operatorToken.ToString());
+			throw new InvalidEquationException("Invalid operator found in equation: " + operatorToken.ToString());
 		}
 
 		#endregion
 
 		#region Helper Functions
-
-		/// <summary>
-		/// Validates that the single argument is non-null, and raises an ArgumentNullException if it is.
-		/// </summary>
-		/// <param name="token">Token object</param>
-		/// <param name="arg1">CValue argument</param>
-		private void ValidateArguments(Token token, CValue arg1)
-		{
-			if (arg1 == null)
-				throw new ArgumentNullException(string.Format("Argument of {0} function cannot be null.", token.ToString()));
-		}
-
-		/// <summary>
-		/// Validates that the arguments are non-null, and raises an ArgumentNullException if either of them are.
-		/// </summary>
-		/// <param name="token">Currently processed Token object</param>
-		/// <param name="arg1">CValue argument 1</param>
-		/// <param name="arg2">CValue argument 2</param>
-		private void ValidateArguments(Token token, CValue arg1, CValue arg2)
-		{
-			if (arg1 == null)
-				throw new ArgumentNullException(string.Format("First argument of {0} operator cannot be null.", token.ToString()));
-			if (arg2 == null)
-				throw new ArgumentNullException(string.Format("Second argument of {0} operator cannot be null.", token.ToString()));
-		}
 
 		/// <summary>
 		/// Creates all operation functions recognized by the compiler.

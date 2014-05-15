@@ -77,58 +77,46 @@ namespace dotMath.Core
 			string token = "";
 			TokenType tokenType = TokenType.Undefined;
 			
-			foreach (char current in _function)
+			foreach (char currentChar in _function)
 			{
-				switch (Token.GetTypeByChar(current))
+				switch (Token.GetTypeByChar(currentChar))
 				{
 					case TokenType.Whitespace:
-						if (token.Length > 0)
+						if (!string.IsNullOrEmpty(token))
 							_tokens.Add(new Token(token, tokenType));
 
 						token = "";
 						break;
 
 					case TokenType.Delimeter:
-						if (token.Length > 0)
+						if (!string.IsNullOrEmpty(token))
 							_tokens.Add(new Token(token, tokenType));
 
-						_tokens.Add(new Token(current.ToString(), TokenType.Delimeter));
-
-						token = "";
-						tokenType = TokenType.Undefined;
-						break;
-
-					case TokenType.Brackets:
-						if (token.Length > 0)
-							_tokens.Add(new Token(token, tokenType));
-
-						_tokens.Add(new Token(current.ToString(), TokenType.Brackets));
+						_tokens.Add(new Token(currentChar.ToString(), TokenType.Delimeter));
 
 						token = "";
 						tokenType = TokenType.Undefined;
 						break;
 
 					case TokenType.Number:
-						if (token.Length == 0)
+						if (string.IsNullOrEmpty(token))
 							tokenType = TokenType.Number;
 
-						token += current;
+						token += currentChar;
 						break;
 
 					case TokenType.Letter:
-						if (token.Length == 0)
+						if (string.IsNullOrEmpty(token))
 							tokenType = TokenType.Letter;
-						else if (tokenType != TokenType.Letter)
-							tokenType = TokenType.Undefined;
-
-						token += current;
+						
+						token += currentChar;
 						break;
 				}
 
 				// use a stack to keep track of parentheses depth/matching
-				if (current == '(')
-					_parentheses.Push(current);
-				else if (current == ')')
+				if (currentChar == '(')
+					_parentheses.Push(currentChar);
+				else if (currentChar == ')')
 				{
 					try
 					{

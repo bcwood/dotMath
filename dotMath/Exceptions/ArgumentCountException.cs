@@ -10,6 +10,6 @@ namespace dotMath.Exceptions
 		/// </summary>
 		/// <param name="count">The number of arguments passed to the function.</param>
 		public ArgumentCountException(int count)
-			: base("Unexpected number of function arguments: " + count) { }
+			: base(string.Format("Incorrect number of function arguments: {0} (all arguments must be non-null)", count)) { }
 	}
 }

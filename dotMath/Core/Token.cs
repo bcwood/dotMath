@@ -11,7 +11,6 @@ namespace dotMath.Core
 		Whitespace,
 		Number,
 		Letter,
-		Brackets,
 		Undefined
 	}
 
@@ -105,8 +104,7 @@ namespace dotMath.Core
 			const string DELIMITERS = "+-*/^%()<>=&|!,";
 			const string NUMBERS = ".0123456789";
 			const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
-			const string BRACKETS = "[]";
-
+			
 			if (WHITESPACE.IndexOf(c) >= 0)
 				return TokenType.Whitespace;
 			if (DELIMITERS.IndexOf(c) >= 0)
@@ -115,8 +113,6 @@ namespace dotMath.Core
 				return TokenType.Number;
 			if (LETTERS.IndexOf(c) >= 0)
 				return TokenType.Letter;
-			if (BRACKETS.IndexOf(c) >= 0)
-				return TokenType.Brackets;
 
 			throw new InvalidEquationException("Invalid token found in equation: " + c);
 		}

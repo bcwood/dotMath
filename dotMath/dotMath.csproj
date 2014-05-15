@@ -101,7 +101,6 @@
     <Compile Include="Exceptions\ArgumentCountException.cs" />
     <Compile Include="Exceptions\InvalidEquationException.cs" />
     <Compile Include="Exceptions\InvalidFunctionException.cs" />
-    <Compile Include="Exceptions\InvalidOperatorException.cs" />
     <Compile Include="Exceptions\UnmatchedParenthesesException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
