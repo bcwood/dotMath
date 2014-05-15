@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using dotMath.Core;
+using dotMath.Exceptions;
 
 namespace dotMath
 {
@@ -50,7 +51,6 @@ namespace dotMath
 		private Token _currentToken;
 		private Token _nextToken;
 		private IEnumerator _tokenEnumerator;
-		private Stack _parentheses = new Stack();
 		private Dictionary<string, CVariable> _variables = new Dictionary<string, CVariable>();
 		private Dictionary<string, COperator> _operators = new Dictionary<string, COperator>();
 		private Dictionary<string, CFunction> _functions = new Dictionary<string, CFunction>();
@@ -118,9 +118,12 @@ namespace dotMath
 				Compile();
 
 			if (_nextToken != null)
-				throw new ApplicationException("Unrecognized token: " + _currentToken.ToString());
-			if (_parentheses.Count > 0)
-				throw new ApplicationException("Unmatched parentheses in equation.");
+			{
+				if (_currentToken.TokenType == TokenType.Delimeter)
+					throw new InvalidOperatorException(_currentToken.ToString());
+				else
+					throw new InvalidEquationException("Unrecognized token found in equation: " + _currentToken.ToString());
+			}
 
 			return _function.GetValue();
 		}
@@ -132,7 +135,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<double, double> function)
 		{
-			_functions.Add(name, new CFunction(function));
+			_functions.Add(name, new CFunction(name, function));
 		}
 
 		/// <summary>
@@ -142,7 +145,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<double, double, double> function)
 		{
-			_functions.Add(name, new CFunction(function));
+			_functions.Add(name, new CFunction(name, function));
 		}
 
 		/// <summary>
@@ -152,7 +155,7 @@ namespace dotMath
 		/// <param name="function">Function delegate.</param>
 		public void AddFunction(string name, Func<bool, double, double, double> function)
 		{
-			_functions.Add(name, new CFunction(function));
+			_functions.Add(name, new CFunction(name, function));
 		}
 
 		#region Operations and Compiling Functions
@@ -176,8 +179,8 @@ namespace dotMath
 				if (string.Equals(_currentToken, ","))
 					return value;
 
-				if (!string.Equals(_currentToken, ")"))
-					throw new ApplicationException("Unmatched parentheses in equation.");
+				//if (!string.Equals(_currentToken, ")"))
+				//	throw new UnmatchedParenthesesException();
 			}
 			else
 			{
@@ -191,7 +194,7 @@ namespace dotMath
 						if (string.Equals(_nextToken, "("))
 						{
 							if (!_functions.ContainsKey(_currentToken.ToString()))
-								throw new ApplicationException(string.Format("Function '{0}' not found.", _currentToken.ToString()));
+								throw new InvalidFunctionException(_currentToken.ToString());
 
 							CFunction function = _functions[_currentToken.ToString()];
 							ArrayList parameters = new ArrayList();
@@ -199,7 +202,15 @@ namespace dotMath
 							do
 							{
 								NextToken();
-								value = Paren();
+
+								try
+								{
+									value = Paren();
+								}
+								catch (InvalidEquationException)
+								{
+									throw new ArgumentCountException(parameters.Count);
+								}
 
 								parameters.Add(value);
 							}
@@ -243,7 +254,7 @@ namespace dotMath
 			
 			if (isNegative)
 			{
-				ValidateParameters(token, function);
+				ValidateArguments(token, function);
 				function = new CSignNeg(function);
 			}
 
@@ -264,7 +275,7 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Sign();
-				ValidateParameters(token, value, nextValue);
+				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -285,7 +296,7 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Power();
-				ValidateParameters(token, value, nextValue);
+				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -306,7 +317,7 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Modulo();
-				ValidateParameters(token, value, nextValue);
+				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -327,7 +338,7 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = MultDiv();
-				ValidateParameters(token, value, nextValue);
+				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -356,7 +367,7 @@ namespace dotMath
 				NextToken();
 
 				CValue nextValue = Relational();
-				ValidateParameters(token, value, nextValue);
+				ValidateArguments(token, value, nextValue);
 				value = GetOperator(token, value, nextValue);
 			}
 
@@ -380,7 +391,7 @@ namespace dotMath
 				return op;
 			}
 
-			throw new ApplicationException(string.Format("Invalid operator {0} in equation.", operatorToken.ToString()));
+			throw new InvalidOperatorException(operatorToken.ToString());
 		}
 
 		#endregion
@@ -388,26 +399,28 @@ namespace dotMath
 		#region Helper Functions
 
 		/// <summary>
-		/// Validates that the arguments are non-null, and raises an exception if they are.
+		/// Validates that the single argument is non-null, and raises an ArgumentNullException if it is.
 		/// </summary>
-		/// <param name="token">Currently processed Token object</param>
-		/// <param name="param1">CValue argument 1</param>
-		/// <param name="param2">CValue argument 2</param>
-		private void ValidateParameters(Token token, CValue param1, CValue param2)
+		/// <param name="token">Token object</param>
+		/// <param name="arg1">CValue argument</param>
+		private void ValidateArguments(Token token, CValue arg1)
 		{
-			if (param1 == null || param2 == null)
-				throw new ApplicationException("Argument not supplied near " + token.ToString() + " operation.");
+			if (arg1 == null)
+				throw new ArgumentNullException(string.Format("Argument of {0} function cannot be null.", token.ToString()));
 		}
 
 		/// <summary>
-		/// Validates that the single argument is non-null, and raises an exception if it is.
+		/// Validates that the arguments are non-null, and raises an ArgumentNullException if either of them are.
 		/// </summary>
-		/// <param name="token">Token object</param>
-		/// <param name="param1">CValue argument</param>
-		private void ValidateParameters(Token token, CValue param1)
+		/// <param name="token">Currently processed Token object</param>
+		/// <param name="arg1">CValue argument 1</param>
+		/// <param name="arg2">CValue argument 2</param>
+		private void ValidateArguments(Token token, CValue arg1, CValue arg2)
 		{
-			if (param1 == null)
-				throw new ApplicationException("Argument not supplied for " + token.ToString() + " operation.");
+			if (arg1 == null)
+				throw new ArgumentNullException(string.Format("First argument of {0} operator cannot be null.", token.ToString()));
+			if (arg2 == null)
+				throw new ArgumentNullException(string.Format("Second argument of {0} operator cannot be null.", token.ToString()));
 		}
 
 		/// <summary>
@@ -472,26 +485,12 @@ namespace dotMath
 			if (_currentToken == null)
 			{
 				if (!_tokenEnumerator.MoveNext())
-					throw new ApplicationException("Invalid equation.");
+					throw new InvalidEquationException("Unexpected end of equation.");
 
 				_nextToken = (Token) _tokenEnumerator.Current;
 			}
 
 			_currentToken = _nextToken;
-
-			if (string.Equals(_currentToken, "("))
-				_parentheses.Push(_currentToken);
-			else if (string.Equals(_currentToken, ")"))
-			{
-				try
-				{
-					_parentheses.Pop();
-				}
-				catch (InvalidOperationException)
-				{
-					throw new ApplicationException("Unmatched parentheses in equation.");
-				}
-			}
 
 			if (_tokenEnumerator.MoveNext())
 				_nextToken = (Token) _tokenEnumerator.Current;

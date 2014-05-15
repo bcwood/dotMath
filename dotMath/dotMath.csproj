@@ -98,6 +98,11 @@
     <Compile Include="Core\BaseClasses.cs" />
     <Compile Include="Core\Token.cs" />
     <Compile Include="EquationCompiler.cs" />
+    <Compile Include="Exceptions\ArgumentCountException.cs" />
+    <Compile Include="Exceptions\InvalidEquationException.cs" />
+    <Compile Include="Exceptions\InvalidFunctionException.cs" />
+    <Compile Include="Exceptions\InvalidOperatorException.cs" />
+    <Compile Include="Exceptions\UnmatchedParenthesesException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

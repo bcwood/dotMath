@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using dotMath.Exceptions;
 
 namespace dotMath.Core
 {
@@ -149,39 +150,61 @@ namespace dotMath.Core
 	/// </summary>
 	internal class CFunction : CValue
 	{
+		private string _name;
 		private object _function;
 		private ArrayList _parameters;
+		private int _expectedArgCount = -1;
 
-		public CFunction(Func<double, double> function)
+		public CFunction(string name, Func<double, double> function)
 		{
+			_name = name;
 			_function = function;
+			_expectedArgCount = 1;
 		}
 
-		public CFunction(Func<double, double, double> function)
+		public CFunction(string name, Func<double, double, double> function)
 		{
+			_name = name;
 			_function = function;
+			_expectedArgCount = 2;
 		}
 
-		public CFunction(Func<bool, double, double, double> function)
+		public CFunction(string name, Func<bool, double, double, double> function)
 		{
+			_name = name;
 			_function = function;
+			_expectedArgCount = 3;
 		}
 
 		public void SetParameters(ArrayList values)
 		{
+			// validate argument count
+			if (_expectedArgCount != values.Count)
+				throw new ArgumentCountException(values.Count);
+
+			// validate arguments aren't null
+			for (int i = 0; i < values.Count; i++)
+			{
+				if (values[i] == null)
+					throw new ArgumentNullException(string.Format("Argument {0} of function {1} cannot be null.", i + 1, _name));
+			}
+
 			_parameters = values;
 		}
 
 		public override double GetValue()
 		{
-			if (_parameters.Count == 1)
-				return (_function as Func<double, double>)(((CValue) _parameters[0]).GetValue());
-			else if (_parameters.Count == 2)
-				return (_function as Func<double, double, double>)(((CValue) _parameters[0]).GetValue(), ((CValue) _parameters[1]).GetValue());
-			else if (_parameters.Count == 3)
-				return (_function as Func<bool, double, double, double>)(Convert.ToBoolean(((CValue) _parameters[0]).GetValue()), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
-
-			throw new ApplicationException("Unexpected number of function parameters: " + _parameters.Count);
+			switch (_parameters.Count)
+			{
+				case 1:
+					return (_function as Func<double, double>)(((CValue) _parameters[0]).GetValue());
+				case 2:
+					return (_function as Func<double, double, double>)(((CValue) _parameters[0]).GetValue(), ((CValue) _parameters[1]).GetValue());
+				case 3:
+					return (_function as Func<bool, double, double, double>)(Convert.ToBoolean(((CValue) _parameters[0]).GetValue()), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
+				default:
+					throw new ArgumentCountException(_parameters.Count);
+			}
 		}
 	}
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using dotMath.Exceptions;
 
 namespace dotMath.Core
 {
@@ -43,6 +45,7 @@ namespace dotMath.Core
 	{
 		private string _function;
 		private ArrayList _tokens;
+		private Stack _parentheses;
 
 		/// <summary>
 		/// Takes an expression and launches the parsing process.
@@ -70,9 +73,10 @@ namespace dotMath.Core
 		private void Parse()
 		{
 			_tokens = new ArrayList();
-			TokenType tokenType = TokenType.Undefined;
+			_parentheses = new Stack();
 			string token = "";
-
+			TokenType tokenType = TokenType.Undefined;
+			
 			foreach (char current in _function)
 			{
 				switch (Token.GetTypeByChar(current))
@@ -128,10 +132,29 @@ namespace dotMath.Core
 						tokenType = TokenType.Undefined;
 						break;
 				}
+
+				// use a stack to keep track of parentheses depth/matching
+				if (current == '(')
+					_parentheses.Push(current);
+				else if (current == ')')
+				{
+					try
+					{
+						_parentheses.Pop();
+					}
+					catch (InvalidOperationException)
+					{
+						throw new UnmatchedParenthesesException();
+					}
+				}
 			}
 
 			if (token.Length > 0)
 				_tokens.Add(new Token(token, tokenType));
+
+			// check for unmatched parentheses
+			if (_parentheses.Count > 0)
+				throw new UnmatchedParenthesesException();
 
 			CheckMultiCharOps();
 		}

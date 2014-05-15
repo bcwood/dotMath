@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using dotMath.Exceptions;
 
 namespace dotMath.Tests
 {
@@ -197,7 +198,7 @@ namespace dotMath.Tests
 		public void InvalidOperator()
 		{
 			var compiler = new EquationCompiler("4!2");
-			Assert.Throws<ApplicationException>(() => compiler.Calculate());
+			Assert.Throws<InvalidOperatorException>(() => compiler.Calculate());
 		}
 	}
 }

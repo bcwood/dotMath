@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using dotMath.Exceptions;
 
 namespace dotMath.Tests
 {
@@ -280,17 +281,33 @@ namespace dotMath.Tests
 
 		[TestCase("abs(-5")]
 		[TestCase("abs(-5))")]
-		public void UnmatchedParen(string function)
+		public void UnmatchedParen(string equation)
 		{
-			var compiler = new EquationCompiler(function);
-			Assert.Throws<ApplicationException>(() => compiler.Calculate());
+			var compiler = new EquationCompiler(equation);
+			Assert.Throws<UnmatchedParenthesesException>(() => compiler.Calculate());
 		}
 
 		[Test]
 		public void InvalidFunction()
 		{
 			var compiler = new EquationCompiler("foo(5)");
-			Assert.Throws<ApplicationException>(() => compiler.Calculate());
+			Assert.Throws<InvalidFunctionException>(() => compiler.Calculate());
+		}
+
+		[TestCase("abs()")]
+		[TestCase("abs(1,2)")]
+		[TestCase("min(1,2,3)")]
+		public void InvalidArgumentCount(string equation)
+		{
+			var compiler = new EquationCompiler(equation);
+			Assert.Throws<ArgumentCountException>(() => compiler.Calculate());
+		}
+
+		[Test]
+		public void NullArgument()
+		{
+			var compiler = new EquationCompiler("min(1,)");
+			Assert.Throws<ArgumentNullException>(() => compiler.Calculate());
 		}
 	}
 }
