@@ -50,6 +50,7 @@ namespace dotMath
 		private Token _currentToken;
 		private Token _nextToken;
 		private IEnumerator _tokenEnumerator;
+		private Stack _parentheses = new Stack();
 		private Dictionary<string, CVariable> _variables = new Dictionary<string, CVariable>();
 		private Dictionary<string, COperator> _operators = new Dictionary<string, COperator>();
 		private Dictionary<string, CFunction> _functions = new Dictionary<string, CFunction>();
@@ -108,7 +109,7 @@ namespace dotMath
 		}
 
 		/// <summary>
-		/// Calls into the runnable function set to evaluate the function and returns the result.
+		/// Evaluates the function and returns the result.
 		/// </summary>
 		/// <returns>double value evaluation of the function in its current state</returns>
 		public double Calculate()
@@ -118,8 +119,40 @@ namespace dotMath
 
 			if (_nextToken != null)
 				throw new ApplicationException("Unrecognized token: " + _currentToken.ToString());
+			if (_parentheses.Count > 0)
+				throw new ApplicationException("Unmatched parentheses in equation.");
 
 			return _function.GetValue();
+		}
+
+		/// <summary>
+		/// Adds a custom function with the given name.
+		/// </summary>
+		/// <param name="name">Name of function.</param>
+		/// <param name="function">Function delegate.</param>
+		public void AddFunction(string name, Func<double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
+		}
+
+		/// <summary>
+		/// Adds a custom function with the given name.
+		/// </summary>
+		/// <param name="name">Name of function.</param>
+		/// <param name="function">Function delegate.</param>
+		public void AddFunction(string name, Func<double, double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
+		}
+
+		/// <summary>
+		/// Adds a custom function with the given name.
+		/// </summary>
+		/// <param name="name">Name of function.</param>
+		/// <param name="function">Function delegate.</param>
+		public void AddFunction(string name, Func<bool, double, double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
 		}
 
 		#region Operations and Compiling Functions
@@ -144,7 +177,7 @@ namespace dotMath
 					return value;
 
 				if (!string.Equals(_currentToken, ")"))
-					throw new ApplicationException("Unmatched parenthesis in equation.");
+					throw new ApplicationException("Unmatched parentheses in equation.");
 			}
 			else
 			{
@@ -431,21 +464,6 @@ namespace dotMath
 				                       });
 		}
 
-		public void AddFunction(string name, Func<double, double> function)
-		{
-			_functions.Add(name, new CFunction(function));
-		}
-
-		public void AddFunction(string name, Func<double, double, double> function)
-		{
-			_functions.Add(name, new CFunction(function));
-		}
-
-		public void AddFunction(string name, Func<bool, double, double, double> function)
-		{
-			_functions.Add(name, new CFunction(function));
-		}
-
 		/// <summary>
 		/// Manipulates the current Token position forward in the chain of tokens discovered by the parser.
 		/// </summary>
@@ -460,6 +478,20 @@ namespace dotMath
 			}
 
 			_currentToken = _nextToken;
+
+			if (string.Equals(_currentToken, "("))
+				_parentheses.Push(_currentToken);
+			else if (string.Equals(_currentToken, ")"))
+			{
+				try
+				{
+					_parentheses.Pop();
+				}
+				catch (InvalidOperationException)
+				{
+					throw new ApplicationException("Unmatched parentheses in equation.");
+				}
+			}
 
 			if (_tokenEnumerator.MoveNext())
 				_nextToken = (Token) _tokenEnumerator.Current;
