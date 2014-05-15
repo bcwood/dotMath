@@ -123,14 +123,6 @@ namespace dotMath.Core
 
 						token += current;
 						break;
-
-					case TokenType.Undefined:
-						if (token.Length > 0)
-							_tokens.Add(new Token(token, tokenType));
-
-						token = "";
-						tokenType = TokenType.Undefined;
-						break;
 				}
 
 				// use a stack to keep track of parentheses depth/matching

@@ -281,14 +281,14 @@ namespace dotMath.Tests
 
 		[TestCase("abs(-5")]
 		[TestCase("abs(-5))")]
-		public void UnmatchedParen(string equation)
+		public void UnmatchedParen_ThrowsUnmatchedParenthesesException(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<UnmatchedParenthesesException>(() => compiler.Calculate());
 		}
 
 		[Test]
-		public void InvalidFunction()
+		public void InvalidFunction_ThrowsInvalidFunctionException()
 		{
 			var compiler = new EquationCompiler("foo(5)");
 			Assert.Throws<InvalidFunctionException>(() => compiler.Calculate());
@@ -297,14 +297,14 @@ namespace dotMath.Tests
 		[TestCase("abs()")]
 		[TestCase("abs(1,2)")]
 		[TestCase("min(1,2,3)")]
-		public void InvalidArgumentCount(string equation)
+		public void InvalidArgumentCount_ThrowsArgumentCountException(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<ArgumentCountException>(() => compiler.Calculate());
 		}
 
 		[Test]
-		public void NullArgument()
+		public void NullArgument_ThrowsArgumentNullException()
 		{
 			var compiler = new EquationCompiler("min(1,)");
 			Assert.Throws<ArgumentNullException>(() => compiler.Calculate());

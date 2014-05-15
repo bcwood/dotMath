@@ -1,4 +1,6 @@
-﻿namespace dotMath.Core
+﻿using dotMath.Exceptions;
+
+namespace dotMath.Core
 {
 	/// <summary>
 	/// Represents the various types of character types known by the parser.
@@ -116,7 +118,7 @@
 			if (BRACKETS.IndexOf(c) >= 0)
 				return TokenType.Brackets;
 
-			return TokenType.Undefined;
+			throw new InvalidEquationException("Invalid token found in equation: " + c);
 		}
 	}
 }

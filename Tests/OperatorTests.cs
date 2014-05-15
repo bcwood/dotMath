@@ -184,21 +184,23 @@ namespace dotMath.Tests
 			Assert.AreEqual(a != b, Convert.ToBoolean(compiler.Calculate()));
 		}
 
-		[Test]
-		public void OrderOfOperations()
+		[TestCase("3 + 4 / 2", ExpectedResult = 3 + 4 / 2.0)]
+		[TestCase("(3 + 4) / 2", ExpectedResult = (3 + 4) / 2.0)]
+		public double OrderOfOperations(string equation)
 		{
-			var compiler = new EquationCompiler("3 + 4 / 2");
-			Assert.AreEqual(3 + 4 / 2.0, compiler.Calculate());
-
-			compiler.SetFunction("(3 + 4) / 2");
-			Assert.AreEqual((3 + 4) / 2.0, compiler.Calculate());
+			var compiler = new EquationCompiler(equation);
+			return compiler.Calculate();
 		}
 
-		[Test]
-		public void InvalidOperator()
+		[TestCase("4!2")]
+		[TestCase("4~2")]
+		[TestCase("4$2")]
+		[TestCase("4\"2")]
+		[TestCase("4'2")]
+		public void InvalidToken_ThrowsInvalidEquationException(string equation)
 		{
-			var compiler = new EquationCompiler("4!2");
-			Assert.Throws<InvalidOperatorException>(() => compiler.Calculate());
+			var compiler = new EquationCompiler(equation);
+			Assert.Throws<InvalidEquationException>(() => compiler.Calculate());
 		}
 	}
 }

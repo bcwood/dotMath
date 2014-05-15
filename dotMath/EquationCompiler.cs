@@ -118,12 +118,7 @@ namespace dotMath
 				Compile();
 
 			if (_nextToken != null)
-			{
-				if (_currentToken.TokenType == TokenType.Delimeter)
-					throw new InvalidOperatorException(_currentToken.ToString());
-				else
-					throw new InvalidEquationException("Unrecognized token found in equation: " + _currentToken.ToString());
-			}
+				throw new InvalidEquationException("Invalid token found in equation: " + _currentToken.ToString());
 
 			return _function.GetValue();
 		}
@@ -178,9 +173,6 @@ namespace dotMath
 
 				if (string.Equals(_currentToken, ","))
 					return value;
-
-				//if (!string.Equals(_currentToken, ")"))
-				//	throw new UnmatchedParenthesesException();
 			}
 			else
 			{
