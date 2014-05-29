@@ -7,9 +7,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("dotMath Equation Compiler")]
 [assembly: AssemblyDescription("dotMath compiler library for algebraic equations")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Steve Hebert and Hebert Software Services, LLC")]
 [assembly: AssemblyProduct("dotMath")]
-[assembly: AssemblyCopyright("Copyright 2001-2004")]
+[assembly: AssemblyCopyright("Copyright 2001-2004 Steve Hebert, 2014 Brandon Wood")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +30,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]

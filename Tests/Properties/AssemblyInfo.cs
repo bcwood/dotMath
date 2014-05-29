@@ -6,9 +6,8 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("dotMath Unit Tests")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Steve Hebert and Hebert Software Services, LLC")]
 [assembly: AssemblyProduct("dotMath.Tests")]
-[assembly: AssemblyCopyright("Copyright 2001-2004")]
+[assembly: AssemblyCopyright("Copyright 2001-2004 Steve Hebert, 2014 Brandon Wood")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
