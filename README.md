@@ -6,7 +6,7 @@ This is a fork of the [dotMath](http://dotmath.codeplex.com/) library by Stephen
 Overview
 --------------------------------------------------
 
-Welcome to dotMath, the extensible open source expression compiler for the .NET platform written entirely in C#. Offering speed through compilation of expressions, the library allows for variable handling, an entire function library and the ability to add your own functions.
+Welcome to dotMath, an extensible mathematical expression compiler for .NET. The library allows for variable handling, an entire function library and the ability to add your own functions.
 
 If you need to evaluate fixed or variable expressions, dotMath is your solution:
 
@@ -18,7 +18,7 @@ If you need to evaluate fixed or variable expressions, dotMath is your solution:
 
     (sin(a)* cos(b/a)) / c
 
-_If you're only interested in downloading the binary, you can find the 1.0 release on [CodePlex](http://dotmath.codeplex.com/releases/view/875)._
+_The original binary from the project's 1.0 release can be found on [CodePlex](http://dotmath.codeplex.com/releases/view/875)._
 
 Documentation
 --------------------------------------------------
