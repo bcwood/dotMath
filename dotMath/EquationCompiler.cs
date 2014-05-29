@@ -153,7 +153,7 @@ namespace dotMath
 								throw new InvalidFunctionException(_currentToken.ToString());
 
 							CFunction function = _functions[_currentToken.ToString()];
-							ArrayList parameters = new ArrayList();
+							var parameters = new List<CValue>();
 
 							do
 							{

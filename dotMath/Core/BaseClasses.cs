@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using dotMath.Exceptions;
 
 namespace dotMath.Core
@@ -101,7 +101,7 @@ namespace dotMath.Core
 	internal class CFunction : CValue
 	{
 		private object _function;
-		private ArrayList _parameters;
+		private List<CValue> _parameters;
 		private int _expectedArgCount = -1;
 
 		public CFunction(Func<double, double> function)
@@ -122,7 +122,7 @@ namespace dotMath.Core
 			_expectedArgCount = 3;
 		}
 
-		public void SetParameters(ArrayList values)
+		public void SetParameters(List<CValue> values)
 		{
 			// validate argument count
 			if (_expectedArgCount != values.Count)

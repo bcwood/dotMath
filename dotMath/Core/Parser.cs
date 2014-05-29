@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using dotMath.Exceptions;
 
 namespace dotMath.Core
@@ -10,8 +11,8 @@ namespace dotMath.Core
 	internal class Parser
 	{
 		private string _function;
-		private ArrayList _tokens;
-		private Stack _parentheses;
+		private List<Token> _tokens;
+		private Stack<char> _parentheses;
 
 		/// <summary>
 		/// Takes an expression and launches the parsing process.
@@ -38,8 +39,8 @@ namespace dotMath.Core
 		/// </summary>
 		private void Parse()
 		{
-			_tokens = new ArrayList();
-			_parentheses = new Stack();
+			_tokens = new List<Token>();
+			_parentheses = new Stack<char>();
 			string token = "";
 			TokenType tokenType = TokenType.Undefined;
 			
@@ -111,7 +112,7 @@ namespace dotMath.Core
 		/// </summary>
 		private void CheckMultiCharOps()
 		{
-			ArrayList tokens = new ArrayList();
+			var tokens = new List<Token>();
 			IEnumerator tokenEnumerator = GetTokenEnumerator();
 			Token token1 = null;
 			Token token2 = null;
