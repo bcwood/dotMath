@@ -106,6 +106,17 @@ namespace dotMath.Tests
 			Assert.AreEqual(Math.Log10(a), compiler.Calculate());
 		}
 
+		[TestCase(27, 3)]
+		[TestCase(4.2, 2.5)]
+		public void Root(double a, double b)
+		{
+			var compiler = new EquationCompiler("root(a,b)");
+			compiler.SetVariable("a", a);
+			compiler.SetVariable("b", b);
+
+			Assert.AreEqual(Math.Pow(a, 1 / b), compiler.Calculate());
+		}
+
 		[TestCase(4.2)]
 		public void Round(double a)
 		{

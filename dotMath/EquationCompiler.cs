@@ -383,6 +383,7 @@ namespace dotMath
 			this.AddFunction("floor", x => Math.Floor(x));
 			this.AddFunction("log", x => Math.Log(x));
 			this.AddFunction("log10", x => Math.Log10(x));
+			this.AddFunction("root", (x, y) => Math.Pow(x, 1.0 / y));
 			this.AddFunction("round", x => Math.Round(x));
 			this.AddFunction("sign", x => Math.Sign(x));
 			this.AddFunction("sin", x => Math.Sin(x));
