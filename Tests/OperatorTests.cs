@@ -180,11 +180,37 @@ namespace dotMath.Tests
 			var compiler = new EquationCompiler("a!=b");
 			compiler.SetVariable("a", a);
 			compiler.SetVariable("b", b);
-
 			Assert.AreEqual(a != b, Convert.ToBoolean(compiler.Calculate()));
-		}
 
-		[TestCase("3 + 4 / 2", ExpectedResult = 3 + 4 / 2.0)]
+            compiler.SetFunction("a<>b");
+            Assert.AreEqual(a != b, Convert.ToBoolean(compiler.Calculate()));
+        }
+
+        [TestCase(1, 0)]
+        [TestCase(1, 1)]
+        [TestCase(0, 1)]
+        [TestCase(0, 0)]
+        public void And(double a, double b)
+	    {
+            var compiler = new EquationCompiler("a&&b");
+            compiler.SetVariable("a", a);
+            compiler.SetVariable("b", b);
+            Assert.AreEqual(Convert.ToBoolean(a) && Convert.ToBoolean(b), Convert.ToBoolean(compiler.Calculate()));
+        }
+
+        [TestCase(1, 0)]
+        [TestCase(1, 1)]
+        [TestCase(0, 1)]
+        [TestCase(0, 0)]
+        public void Or(double a, double b)
+        {
+            var compiler = new EquationCompiler("a||b");
+            compiler.SetVariable("a", a);
+            compiler.SetVariable("b", b);
+            Assert.AreEqual(Convert.ToBoolean(a) || Convert.ToBoolean(b), Convert.ToBoolean(compiler.Calculate()));
+        }
+
+        [TestCase("3 + 4 / 2", ExpectedResult = 3 + 4 / 2.0)]
 		[TestCase("(3 + 4) / 2", ExpectedResult = (3 + 4) / 2.0)]
 		public double OrderOfOperations(string equation)
 		{

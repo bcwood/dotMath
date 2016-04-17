@@ -364,7 +364,9 @@ namespace dotMath
 			_operators.Add("==", new COperator((x, y) => { if (x == y) return 1; else return 0; }));
 			_operators.Add("<>", new COperator((x, y) => { if (x != y) return 1; else return 0; }));
 			_operators.Add("!=", new COperator((x, y) => { if (x != y) return 1; else return 0; }));
-		}
+            _operators.Add("&&", new COperator((x, y) => { if (Convert.ToBoolean(x) && Convert.ToBoolean(y)) return 1; else return 0; }));
+            _operators.Add("||", new COperator((x, y) => { if (Convert.ToBoolean(x) || Convert.ToBoolean(y)) return 1; else return 0; }));
+        }
 
 		/// <summary>
 		/// Creates all functions recognized by the compiler.
