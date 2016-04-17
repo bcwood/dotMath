@@ -262,7 +262,21 @@ namespace dotMath.Tests
 			Assert.AreEqual((result ? a : b), compiler.Calculate());
 		}
 
-		[Test]
+        [TestCase("1>2", false, 3, 4, 1)]
+        [TestCase("2>1", true, 5, 6, 2)]
+        public void IfWithEquation(string condition, bool result, double a, double b, double c)
+        {
+            var compiler = new EquationCompiler(string.Format("if({0},(a+b),c)", condition));
+            compiler.SetVariable("a", a);
+            compiler.SetVariable("b", b);
+            compiler.SetVariable("c", c);
+            Assert.AreEqual((result ? a + b : c), compiler.Calculate());
+
+            compiler.SetFunction(string.Format("if({0},a,(b+c))", condition));
+            Assert.AreEqual((result ? a : b + c), compiler.Calculate());
+        }
+
+        [Test]
 		public void MultipleFunctionsPerObject()
 		{
 			var compiler = new EquationCompiler("abs(-4)");
