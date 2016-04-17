@@ -327,7 +327,8 @@ namespace dotMath.Tests
 		[TestCase("min(1,2,3)")]
 		[TestCase("if(1>2,,3)")]
 		[TestCase("if(1>2,3,)")]
-		public void InvalidArgumentCount_ThrowsArgumentCountException(string equation)
+        [TestCase("if(1>2,3,4,5)")]
+        public void InvalidArgumentCount_ThrowsArgumentCountException(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<ArgumentCountException>(() => compiler.Calculate());
