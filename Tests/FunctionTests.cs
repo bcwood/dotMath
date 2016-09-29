@@ -227,7 +227,19 @@ namespace dotMath.Tests
 			Assert.AreEqual(Math.Sin(a) + Math.Cos(b) - Math.Tan(c), compiler.Calculate());
 		}
 
-		[TestCase(4, 2)]
+        [TestCase(1.5, 2.25, 3.3)]
+        [TestCase(-1.5, -2.25, -3.3)]
+        public void MultipleOfSameFunction(double a, double b, double c)
+        {
+            var compiler = new EquationCompiler("sin(a) + sin(b) - sin(c)");
+            compiler.SetVariable("a", a);
+            compiler.SetVariable("b", b);
+            compiler.SetVariable("c", c);
+
+            Assert.AreEqual(Math.Sin(a) + Math.Sin(b) - Math.Sin(c), compiler.Calculate());
+        }
+
+        [TestCase(4, 2)]
 		[TestCase(2, 4)]
 		[TestCase(4, -2)]
 		public void Min(double a, double b)

@@ -218,7 +218,17 @@ namespace dotMath.Tests
 			return compiler.Calculate();
 		}
 
-		[TestCase("4!2")]
+        [TestCase("1 + 2 + 3", ExpectedResult = 1 + 2 + 3)]
+        [TestCase("1 - 2 - 3", ExpectedResult = 1 - 2 - 3)]
+        [TestCase("1 * 2 * 3", ExpectedResult = 1 * 2 * 3)]
+        [TestCase("1 / 2 / 3", ExpectedResult = 1.0 / 2.0 / 3.0)]
+        public double MultipleOfSameOperator(string equation)
+        {
+            var compiler = new EquationCompiler(equation);
+            return compiler.Calculate();
+        }
+
+        [TestCase("4!2")]
 		[TestCase("4~2")]
 		[TestCase("4$2")]
 		[TestCase("4\"2")]
