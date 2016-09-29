@@ -33,6 +33,10 @@ namespace dotMath
 			InitFunctions();
 		}
 
+        /// <summary>
+        /// Gets the string variable names parsed by compiling the function.
+        /// </summary>
+        /// <returns>Read-only collection of variable names</returns>
         public ICollection<string> GetVariableNames()
         {
             if (_function == null)
