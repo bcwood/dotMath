@@ -235,5 +235,21 @@ namespace dotMath.Tests
 			var compiler = new EquationCompiler("4+");
 			Assert.Throws<InvalidEquationException>(() => compiler.Calculate());
 		}
-	}
+
+        [Test]
+        public void GetVariableNames()
+        {
+            var compiler = new EquationCompiler("a+b+c");
+
+            CollectionAssert.AreEquivalent(new string[] { "a", "b", "c" }, compiler.GetVariableNames());
+        }
+
+        [Test]
+        public void GetVariableNames_CollectionIsReadOnly()
+        {
+            var compiler = new EquationCompiler("a+b+c");
+
+            Assert.IsTrue(compiler.GetVariableNames().IsReadOnly);
+        }
+    }
 }
