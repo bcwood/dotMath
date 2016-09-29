@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using dotMath.Core;
 using dotMath.Exceptions;
 
@@ -32,12 +33,24 @@ namespace dotMath
 			InitFunctions();
 		}
 
-		/// <summary>
-		/// Sets the object mapped to the string variable name to the double value passed.
-		/// </summary>
-		/// <param name="name">Variable Name</param>
-		/// <param name="value">New Value for variable</param>
-		public void SetVariable(string name, double value)
+        /// <summary>
+        /// Gets the string variable names parsed by compiling the function.
+        /// </summary>
+        /// <returns>Read-only collection of variable names</returns>
+        public ICollection<string> GetVariableNames()
+        {
+            if (_function == null)
+                Compile();
+
+            return _variables.Keys;
+        }
+
+        /// <summary>
+        /// Sets the object mapped to the string variable name to the double value passed.
+        /// </summary>
+        /// <param name="name">Variable Name</param>
+        /// <param name="value">New Value for variable</param>
+        public void SetVariable(string name, double value)
 		{
 			CVariable variable = GetVariableByName(name);
 			variable.SetValue(value);
