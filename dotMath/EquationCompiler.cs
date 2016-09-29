@@ -187,8 +187,7 @@ namespace dotMath
 
 							isFunction = true;
 
-							function.SetParameters(parameters);
-							value = function;
+							value = function.SetParameters(parameters);
 						}
 						else
 							value = GetVariableByName(_currentToken.ToString());
@@ -348,8 +347,8 @@ namespace dotMath
 			if (_operators.ContainsKey(operatorToken.ToString()))
 			{
 				COperator op = _operators[operatorToken.ToString()];
-				op.SetParameters(value1, value2);
-				return op;
+
+                return op.SetParameters(value1, value2);
 			}
 
 			throw new InvalidEquationException("Invalid operator found in equation: " + operatorToken.ToString());
