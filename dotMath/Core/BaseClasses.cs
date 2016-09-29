@@ -82,10 +82,14 @@ namespace dotMath.Core
 			_function = function;
 		}
 
-		public void SetParameters(CValue param1, CValue param2)
+		public COperator SetParameters(CValue param1, CValue param2)
 		{
-			_param1 = param1;
-			_param2 = param2;
+            var clone = new COperator(_function);
+
+            clone._param1 = param1;
+            clone._param2 = param2;
+
+            return clone;
 		}
 
 		public override double GetValue()
@@ -122,9 +126,15 @@ namespace dotMath.Core
 			_expectedArgCount = 3;
 		}
 
-		public void SetParameters(List<CValue> values)
+        private CFunction(object function, int expectedArgCount)
+        {
+            _function = function;
+            _expectedArgCount = expectedArgCount;
+        }
+
+		public CFunction SetParameters(List<CValue> values)
 		{
-			// validate argument count
+            // validate argument count
 			if (_expectedArgCount != values.Count)
 				throw new ArgumentCountException(values.Count);
 
@@ -135,7 +145,11 @@ namespace dotMath.Core
 					throw new ArgumentCountException(values.Count);
 			}
 
-			_parameters = values;
+            var clone = new CFunction(_function, _expectedArgCount);
+
+            clone._parameters = values;
+
+            return clone;
 		}
 
 		public override double GetValue()
