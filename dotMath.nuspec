@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>dotMath</id>
+        <version>$version$</version>
+        <title>dotMath</title>
+        <description>An extensible mathematical expression compiler for .NET..</description>
+        <authors>Brandon Wood</authors>
+        <owners>Brandon Wood</owners>
+        <projectUrl>https://github.com/bcwood/dotMath</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>2004 Stephen Hebert, 2014 Brandon Wood</copyright>
+        <tags>math</tags>
+        <releaseNotes></releaseNotes>
+    </metadata>
+    <files>
+        <file src="dotMath\bin\Release\dotMath.dll" target="lib\net45" />
+    </files>
+</package>
