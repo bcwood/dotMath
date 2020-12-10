@@ -188,6 +188,9 @@ namespace dotMath
 							isFunction = true;
 
 							value = function.SetParameters(parameters);
+
+							if (string.Equals(_currentToken, ")") && parameters.Count > 1)
+								NextToken();
 						}
 						else
 							value = GetVariableByName(_currentToken.ToString());
