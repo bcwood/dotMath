@@ -189,6 +189,13 @@ namespace dotMath.Tests
 			Assert.AreEqual(Math.Sin(Math.Cos(Math.Tan(a))), compiler.Calculate());
 		}
 
+        [Test]
+        public void NestedFunctionsWithMultipleParameters()
+        {
+            var compiler = new EquationCompiler("max(1,min(2,3))");
+			Assert.AreEqual(2, compiler.Calculate());
+        }
+
 		[Test]
 		public void RangeTest()
 		{
@@ -286,6 +293,13 @@ namespace dotMath.Tests
 
             compiler.SetFunction(string.Format("if({0},a,(b+c))", condition));
             Assert.AreEqual((result ? a : b + c), compiler.Calculate());
+        }
+
+        [Test]
+        public void NestedIf()
+        {
+			var compiler = new EquationCompiler("if(1, if(1, 2, 3), 4)");
+			Assert.AreEqual(2, compiler.Calculate());
         }
 
         [Test]
