@@ -8,3 +8,5 @@
 *.sqlsuo
 *.pdb
 *.rdl.data
+packages/
+.vs/
