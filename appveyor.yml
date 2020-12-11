@@ -1,14 +1,40 @@
 version: 1.5.0.{build}
 
+environment:
+  packageVersion: 1.5.0
+
 image: Visual Studio 2019
 
+init:
+- ps: $env:buildVersion = "$env:packageVersion.$env:appveyor_build_number"
+- ps: $env:nugetVersion = "$env:packageVersion"
+- ps: Update-AppveyorBuild -Version $env:buildVersion
+
+configuration: Release
+
 before_build:
+- nuget restore
 - cmd: dotnet restore
 
 build:
   verbosity: minimal
 
+after_build:
+- ps: nuget pack dotMath.nuspec -version "$env:nugetVersion"
+
 deploy:
 - provider: NuGet
   api_key:
     secure: F9stGuIbUQoboJuAGMkMUULJMKhuR546Cd5vAZhToh2yoNuOF6z2E8flGI0b2fET
+
+artifacts:
+- path: 'dotMath*.nupkg'
+  name: nuget-package
+
+deploy:
+- provider: NuGet
+  api_key:
+    secure: F9stGuIbUQoboJuAGMkMUULJMKhuR546Cd5vAZhToh2yoNuOF6z2E8flGI0b2fET
+  artifact: nuget-package
+  on:
+    branch: master
