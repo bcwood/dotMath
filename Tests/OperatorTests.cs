@@ -212,7 +212,9 @@ namespace dotMath.Tests
 
         [TestCase("3 + 4 / 2", ExpectedResult = 3 + 4 / 2.0)]
 		[TestCase("(3 + 4) / 2", ExpectedResult = (3 + 4) / 2.0)]
-		public double OrderOfOperations(string equation)
+		[TestCase("1 != 2 && 2 != 3", ExpectedResult = 1)]
+		[TestCase("1 && 0 || 1 && 1", ExpectedResult = 1)]
+        public double OrderOfOperations(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
 			return compiler.Calculate();

@@ -78,7 +78,7 @@ namespace dotMath
 
 			NextToken();
 
-			_function = Relational();
+			_function = Or();
 		}
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace dotMath
 			{
 				NextToken();
 
-				value = Relational();
+				value = Or();
 
 				if (string.Equals(_currentToken, ","))
 					return value;
@@ -312,30 +312,66 @@ namespace dotMath
 		/// Detects the operation to perform a relational operator (>, <, <=, etc.).
 		/// </summary>
 		/// <returns>CValue object representing an operation.</returns>
-		private CValue Relational()
-		{
-			CValue value = AddSub();
+        private CValue Relational()
+        {
+            CValue value = AddSub();
 
-			while (_currentToken == "&&" ||
-				   _currentToken == "||" ||
-				   _currentToken == "==" ||
-				   _currentToken == "<"  ||
-				   _currentToken == ">"  ||
-				   _currentToken == "<=" ||
-				   _currentToken == ">=" ||
-				   _currentToken == "!=" ||
-				   _currentToken == "<>")
-			{
-				Token token = _currentToken;
-				NextToken();
+            while (_currentToken == "==" ||
+                   _currentToken == "<"  ||
+                   _currentToken == ">"  ||
+                   _currentToken == "<=" ||
+                   _currentToken == ">=" ||
+                   _currentToken == "!=" ||
+                   _currentToken == "<>")
+            {
+                Token token = _currentToken;
+                NextToken();
 
-				CValue nextValue = Relational();
-				value = GetOperator(token, value, nextValue);
-			}
+                CValue nextValue = AddSub();
+                value = GetOperator(token, value, nextValue);
+            }
 
-			return value;
-		}
+            return value;
+        }
 
+        /// <summary>
+        /// Detects the operation to perform a logical AND.
+        /// </summary>
+        /// <returns>CValue object representing an operation.</returns>
+        private CValue And()
+        {
+            CValue value = Relational();
+            while (_currentToken == "&&")
+            {
+                Token token = _currentToken;
+                NextToken();
+                
+                CValue nextValue = Relational();
+                value = GetOperator(token, value, nextValue);
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// Detects the operation to perform a logical OR.
+        /// </summary>
+        /// <returns>CValue object representing an operation.</returns>
+        private CValue Or()
+        {
+            CValue value = And();
+
+            while (_currentToken == "||")
+            {
+                Token token = _currentToken;
+                NextToken();
+                
+                CValue nextValue = Or();
+                value = GetOperator(token, value, nextValue);
+            }
+
+            return value;
+        }
+        
 		/// <summary>
 		/// Reads the passed operator, identifies the associated implementation object
 		///	and requests an operation object to be used in evaluating the equation.
