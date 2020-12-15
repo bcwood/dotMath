@@ -4,8 +4,6 @@
 
 This is a fork of the [dotMath](http://dotmath.codeplex.com/) library by Stephen Hebert, currently hosted on CodePlex, which hasn't been updated since 2004. The documentation found here and on the wiki is mostly pulled from the CodePlex site.
 
-dotMath is also now available as a [NuGet package](https://www.nuget.org/packages/dotMath/).
-
 ## Overview
 
 Welcome to dotMath, an extensible mathematical expression compiler for .NET. The library allows for variable handling, an entire function library and the ability to add your own functions.
@@ -14,7 +12,7 @@ If you need to evaluate fixed or variable expressions, dotMath is your solution.
 
 ## Install from NuGet
 
-    Install-Package PressSharper
+    Install-Package dotMath
     
 ## Example Usage
 
