@@ -126,6 +126,16 @@ namespace dotMath
 			_functions.Add(name, new CFunction(function));
 		}
 
+		/// <summary>
+		/// Adds a custom function with the given name.
+		/// </summary>
+		/// <param name="name">Name of function.</param>
+		/// <param name="function">Function delegate.</param>
+		public void AddFunction(string name, Func<double, double, double, double> function)
+		{
+			_functions.Add(name, new CFunction(function));
+		}
+
 		#region Operations and Compiling Functions
 
 		/// <summary>
@@ -191,7 +201,7 @@ namespace dotMath
 							if (string.Equals(_currentToken, ")") && parameters.Count > 1)
 								NextToken();
 						}
-						else
+                        else
 							value = GetVariableByName(_currentToken.ToString());
 
 						break;
