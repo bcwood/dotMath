@@ -126,6 +126,12 @@ namespace dotMath.Core
 			_expectedArgCount = 3;
 		}
 
+		public CFunction(Func<double, double, double, double> function)
+		{
+			_function = function;
+			_expectedArgCount = 3;
+		}
+
         private CFunction(object function, int expectedArgCount)
         {
             _function = function;
@@ -161,7 +167,17 @@ namespace dotMath.Core
 				case 2:
 					return (_function as Func<double, double, double>)(((CValue) _parameters[0]).GetValue(), ((CValue) _parameters[1]).GetValue());
 				case 3:
-					return (_function as Func<bool, double, double, double>)(Convert.ToBoolean(((CValue) _parameters[0]).GetValue()), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
+					var boolFunction = _function as Func<bool, double, double, double>;
+					if (boolFunction != null) 
+					{
+						return boolFunction(Convert.ToBoolean(((CValue) _parameters[0]).GetValue()), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
+					}
+					var doubleFunction = _function as Func<double, double, double, double>;
+					if (doubleFunction != null) 
+					{
+						return doubleFunction(((CValue) _parameters[0]).GetValue(), ((CValue) _parameters[1]).GetValue(), ((CValue) _parameters[2]).GetValue());
+					}
+					throw new InvalidOperationException("The Custom Function Type is not supported");
 				default:
 					throw new ArgumentCountException(_parameters.Count);
 			}

@@ -359,5 +359,27 @@ namespace dotMath.Tests
 			var compiler = new EquationCompiler(equation);
 			Assert.Throws<ArgumentCountException>(() => compiler.Calculate());
 		}
+
+        [TestCase(1, 2, 3, 6)]
+		[TestCase(5, 10, 15, 30)]
+        public void SupportFunc4Double_Succeeds(double a, double b, double c, double d)
+        {
+			var compiler = new EquationCompiler($"sum({a},{b},{c})");
+			compiler.AddFunction("sum", (double x, double y, double z) => x + y + z);
+            Assert.AreEqual(d, compiler.Calculate());
+        }
+
+		[TestCase(1, 1.0, 2.0, 1.0)]
+		[TestCase(0, 1.0, 2.0, 2.0)]
+		public void SupportFuncBool3Double_Succeeds(double a, double b, double c, double d) 
+		{
+			var compiler = new EquationCompiler($"test({a},{b},{c})");
+			compiler.AddFunction("test", (bool x, double y, double z) => 
+			{
+				if (x) return y;
+				else return z;
+			});
+		 	Assert.AreEqual(d, compiler.Calculate());
+		}
 	}
 }
