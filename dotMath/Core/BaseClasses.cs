@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using dotMath.Exceptions;
 
 namespace dotMath.Core
@@ -41,7 +42,7 @@ namespace dotMath.Core
 
 		public CNumber(string value)
 		{
-			_value = Convert.ToDouble(value);
+			_value = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 		}
 
 		public override double GetValue()
