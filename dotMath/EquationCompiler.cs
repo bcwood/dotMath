@@ -14,15 +14,15 @@ namespace dotMath
 	/// </summary>
 	public class EquationCompiler
 	{
-        private static readonly HashSet<CultureInfo> SwissCultures = new HashSet<CultureInfo>
-        {
-            CultureInfo.GetCultureInfo("fr-CH"),
-            CultureInfo.GetCultureInfo("de-CH"),
-            CultureInfo.GetCultureInfo("it-CH"),
-        };
+		private static readonly HashSet<CultureInfo> SwissCultures = new HashSet<CultureInfo>
+		{
+			CultureInfo.GetCultureInfo("fr-CH"),
+			CultureInfo.GetCultureInfo("de-CH"),
+			CultureInfo.GetCultureInfo("it-CH"),
+		};
 
-        private readonly CultureInfo _cultureInfo;
-        private string _equation;
+		private readonly CultureInfo _cultureInfo;
+		private string _equation;
 		private CValue _function;
 		private Token _currentToken;
 		private Token _nextToken;
@@ -35,11 +35,11 @@ namespace dotMath
 		/// Creates the compiler object and sets the current function to the string passed
 		/// </summary>
 		/// <param name="equation"></param>
-        /// <param name="cultureInfo">(Optional) The culture used to parse equations. The default is null which results in InvariantCulture being used.</param>
+		/// <param name="cultureInfo">(Optional) The culture used to parse equations. The default is null which results in InvariantCulture being used.</param>
 		public EquationCompiler(string equation = null, CultureInfo cultureInfo = null)
 		{
-            _cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
-            SetFunction(equation);
+			_cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
+			SetFunction(equation);
 			InitOperators();
 			InitFunctions();
 		}

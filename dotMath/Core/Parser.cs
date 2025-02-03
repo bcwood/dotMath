@@ -11,22 +11,22 @@ namespace dotMath.Core
 	/// </summary>
 	internal class Parser
 	{
-        private readonly CultureInfo _cultureInfo;
+		private readonly CultureInfo _cultureInfo;
 		private string _function;
-        private List<Token> _tokens;
+		private List<Token> _tokens;
 		private Stack<char> _parentheses;
 
 		/// <summary>
 		/// Takes an expression and launches the parsing process.
 		/// </summary>
 		/// <param name="function">The expression string to be parsed.</param>
-        /// <param name="cultureInfo">The culture used to parse equations.</param>
+		/// <param name="cultureInfo">The culture used to parse equations.</param>
 		public Parser(string function, CultureInfo cultureInfo)
 		{
 			_function = function;
-            _cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
+			_cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 
-            this.Parse();
+			this.Parse();
 		}
 
 		/// <summary>

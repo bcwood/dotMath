@@ -118,10 +118,10 @@ namespace dotMath.Core
 			throw new InvalidEquationException("Invalid token found in equation: " + c);
 		}
 
-        private static bool IsNumberSeparator(char c, CultureInfo cultureInfo)
-        {
-            return c == cultureInfo.NumberFormat.NumberGroupSeparator[0] ||
-                   c == cultureInfo.NumberFormat.NumberDecimalSeparator[0];
-        }
+		private static bool IsNumberSeparator(char c, CultureInfo cultureInfo)
+		{
+			return c == cultureInfo.NumberFormat.NumberGroupSeparator[0] ||
+			       c == cultureInfo.NumberFormat.NumberDecimalSeparator[0];
+		}
 	}
 }
