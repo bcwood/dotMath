@@ -1,7 +1,7 @@
-version: 1.5.2.{build}
+version: 1.5.3.{build}
 
 environment:
-  packageVersion: 1.5.2
+  packageVersion: 1.5.3
 
 image: Visual Studio 2019
 
