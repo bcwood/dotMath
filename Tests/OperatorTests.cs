@@ -48,7 +48,7 @@ namespace dotMath.Tests
 		[Test]
 		public void ConstantWithCulture_CH()
 		{
-			var compiler = new EquationCompiler("4\u202f200,50", CultureInfo.GetCultureInfo("fr-CH"));
+			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("fr-CH"));
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
@@ -62,7 +62,7 @@ namespace dotMath.Tests
 		[Test]
 		public void ConstantWithCulture_RU()
 		{
-			var compiler = new EquationCompiler("4\u00a0200,50", CultureInfo.GetCultureInfo("ru-RU"));
+			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("ru-RU"));
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
@@ -76,7 +76,7 @@ namespace dotMath.Tests
 		[Test]
 		public void ConstantWithCulture_SE()
 		{
-			var compiler = new EquationCompiler("4\u00a0200,50", CultureInfo.GetCultureInfo("sv-SE"));
+			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("sv-SE"));
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
@@ -97,7 +97,7 @@ namespace dotMath.Tests
 		[Test]
 		public void DifferentGroupSeparators_FR()
 		{
-			var compiler = new EquationCompiler("4\u202f200,50", CultureInfo.GetCultureInfo("fr-FR")); // French narrow no-break space
+			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("fr-FR")); // French narrow no-break space
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
