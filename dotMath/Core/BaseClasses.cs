@@ -40,9 +40,9 @@ namespace dotMath.Core
 	{
 		private double _value;
 
-		public CNumber(string value)
+		public CNumber(string value, CultureInfo cultureInfo)
 		{
-			_value = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+			_value = Convert.ToDouble(value, cultureInfo);
 		}
 
 		public override double GetValue()

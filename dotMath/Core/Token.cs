@@ -1,4 +1,5 @@
-﻿using dotMath.Exceptions;
+﻿using System.Globalization;
+using dotMath.Exceptions;
 
 namespace dotMath.Core
 {
@@ -98,23 +99,29 @@ namespace dotMath.Core
 			return _value;
 		}
 
-		public static TokenType GetTypeByChar(char c)
+		public static TokenType GetTypeByChar(char c, CultureInfo cultureInfo)
 		{
 			const string WHITESPACE = " \t";
-			const string DELIMITERS = "+-*/^%()<>=&|!,";
-			const string NUMBERS = ".0123456789";
+			const string DELIMITERS = "+-*/^%()<>=&|!;";
+			const string NUMBERS = "0123456789";
 			const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
 			
 			if (WHITESPACE.IndexOf(c) >= 0)
 				return TokenType.Whitespace;
 			if (DELIMITERS.IndexOf(c) >= 0)
 				return TokenType.Delimeter;
-			if (NUMBERS.IndexOf(c) >= 0)
+			if (NUMBERS.IndexOf(c) >= 0 || IsNumberSeparator(c, cultureInfo))
 				return TokenType.Number;
 			if (LETTERS.IndexOf(c) >= 0)
 				return TokenType.Letter;
 
 			throw new InvalidEquationException("Invalid token found in equation: " + c);
+		}
+
+		private static bool IsNumberSeparator(char c, CultureInfo cultureInfo)
+		{
+			return c == cultureInfo.NumberFormat.NumberGroupSeparator[0] ||
+			       c == cultureInfo.NumberFormat.NumberDecimalSeparator[0];
 		}
 	}
 }

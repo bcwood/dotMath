@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using dotMath.Core;
 using dotMath.Exceptions;
 
@@ -12,6 +14,14 @@ namespace dotMath
 	/// </summary>
 	public class EquationCompiler
 	{
+		private static readonly HashSet<CultureInfo> SwissCultures = new HashSet<CultureInfo>
+		{
+			CultureInfo.GetCultureInfo("fr-CH"),
+			CultureInfo.GetCultureInfo("de-CH"),
+			CultureInfo.GetCultureInfo("it-CH"),
+		};
+
+		private readonly CultureInfo _cultureInfo;
 		private string _equation;
 		private CValue _function;
 		private Token _currentToken;
@@ -25,8 +35,10 @@ namespace dotMath
 		/// Creates the compiler object and sets the current function to the string passed
 		/// </summary>
 		/// <param name="equation"></param>
-		public EquationCompiler(string equation = null)
+		/// <param name="cultureInfo">(Optional) The culture used to parse equations. The default is null which results in InvariantCulture being used.</param>
+		public EquationCompiler(string equation = null, CultureInfo cultureInfo = null)
 		{
+			_cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			SetFunction(equation);
 			InitOperators();
 			InitFunctions();
@@ -64,16 +76,16 @@ namespace dotMath
 			_currentToken = null;
 			_nextToken = null;
 
-			_equation = function;
+			_equation = CorrectForEdgeCaseCultures(function, _cultureInfo);
 			_function = null;
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Kicks off the process to tokenize the function and compile the resulting token set into a runnable form.
 		/// </summary>
 		public void Compile()
 		{
-			var parser = new Parser(_equation);
+			var parser = new Parser(_equation, _cultureInfo);
 			_tokenEnumerator = parser.GetTokenEnumerator();
 
 			NextToken();
@@ -157,7 +169,7 @@ namespace dotMath
 
 				value = Or();
 
-				if (string.Equals(_currentToken, ","))
+				if (string.Equals(_currentToken, ";"))
 					return value;
 			}
 			else
@@ -165,7 +177,7 @@ namespace dotMath
 				switch (_currentToken.TokenType)
 				{
 					case TokenType.Number:
-						value = new CNumber(_currentToken.ToString());
+						value = new CNumber(_currentToken.ToString(), _cultureInfo);
 						break;
 
 					case TokenType.Letter:
@@ -192,7 +204,7 @@ namespace dotMath
 
 								parameters.Add(value);
 							}
-							while (string.Equals(_currentToken, ","));
+							while (string.Equals(_currentToken, ";"));
 
 							isFunction = true;
 
@@ -405,6 +417,18 @@ namespace dotMath
 		#endregion
 
 		#region Helper Functions
+
+        private static string CorrectForEdgeCaseCultures(string function, CultureInfo cultureInfo)
+        {
+            var pattern = $@"(?<=\d)[{Regex.Escape("'")}](?=\d)";
+
+            if (SwissCultures.Contains(cultureInfo))
+            {
+                return Regex.Replace(function, pattern, cultureInfo.NumberFormat.NumberGroupSeparator);
+            }
+
+            return function;
+        }
 
 		/// <summary>
 		/// Creates all operation functions recognized by the compiler.
