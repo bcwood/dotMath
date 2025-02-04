@@ -47,8 +47,9 @@ namespace dotMath.Tests
 
 		[Test]
 		public void ConstantWithCulture_CH()
-		{
-			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("fr-CH"));
+        {
+            var culture = CultureInfo.GetCultureInfo("fr-CH");
+			var compiler = new EquationCompiler($"4{culture.NumberFormat.NumberGroupSeparator}200,50", culture);
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
@@ -96,8 +97,9 @@ namespace dotMath.Tests
 
 		[Test]
 		public void DifferentGroupSeparators_FR()
-		{
-			var compiler = new EquationCompiler("4 200,50", CultureInfo.GetCultureInfo("fr-FR")); // French narrow no-break space
+        {
+            var culture = CultureInfo.GetCultureInfo("fr-FR");
+			var compiler = new EquationCompiler($"4{culture.NumberFormat.NumberGroupSeparator}200,50", culture); // French narrow no-break space
 			Assert.AreEqual(4200.50, compiler.Calculate());
 		}
 
