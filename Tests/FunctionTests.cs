@@ -110,7 +110,7 @@ namespace dotMath.Tests
 		[TestCase(4.2, 2.5)]
 		public void Root(double a, double b)
 		{
-			var compiler = new EquationCompiler("root(a,b)");
+			var compiler = new EquationCompiler("root(a;b)");
 			compiler.SetVariable("a", a);
 			compiler.SetVariable("b", b);
 
@@ -192,7 +192,7 @@ namespace dotMath.Tests
         [Test]
         public void NestedFunctionsWithMultipleParameters()
         {
-            var compiler = new EquationCompiler("max(1,min(2,3))");
+            var compiler = new EquationCompiler("max(1;min(2;3))");
 			Assert.AreEqual(2, compiler.Calculate());
         }
 
@@ -251,7 +251,7 @@ namespace dotMath.Tests
 		[TestCase(4, -2)]
 		public void Min(double a, double b)
 		{
-			var compiler = new EquationCompiler("min(a,b)");
+			var compiler = new EquationCompiler("min(a;b)");
 			compiler.SetVariable("a", a);
 			compiler.SetVariable("b", b);
 
@@ -263,7 +263,7 @@ namespace dotMath.Tests
 		[TestCase(4, -2)]
 		public void Max(double a, double b)
 		{
-			var compiler = new EquationCompiler("max(a,b)");
+			var compiler = new EquationCompiler("max(a;b)");
 			compiler.SetVariable("a", a);
 			compiler.SetVariable("b", b);
 
@@ -274,7 +274,7 @@ namespace dotMath.Tests
 		[TestCase("2>1", true, 5, 6)]
 		public void If(string condition, bool result, double a, double b)
 		{
-			var compiler = new EquationCompiler(string.Format("if({0},a,b)", condition));
+			var compiler = new EquationCompiler(string.Format("if({0};a;b)", condition));
 			compiler.SetVariable("a", a);
 			compiler.SetVariable("b", b);
 
@@ -285,20 +285,20 @@ namespace dotMath.Tests
         [TestCase("2>1", true, 5, 6, 2)]
         public void IfWithEquation(string condition, bool result, double a, double b, double c)
         {
-            var compiler = new EquationCompiler(string.Format("if({0},(a+b),c)", condition));
+            var compiler = new EquationCompiler(string.Format("if({0};(a+b);c)", condition));
             compiler.SetVariable("a", a);
             compiler.SetVariable("b", b);
             compiler.SetVariable("c", c);
             Assert.AreEqual((result ? a + b : c), compiler.Calculate());
 
-            compiler.SetFunction(string.Format("if({0},a,(b+c))", condition));
+            compiler.SetFunction(string.Format("if({0};a;(b+c))", condition));
             Assert.AreEqual((result ? a : b + c), compiler.Calculate());
         }
 
         [Test]
         public void NestedIf()
         {
-			var compiler = new EquationCompiler("if(1, if(1, 2, 3), 4)");
+			var compiler = new EquationCompiler("if(1; if(1; 2; 3); 4)");
 			Assert.AreEqual(2, compiler.Calculate());
         }
 
@@ -346,14 +346,14 @@ namespace dotMath.Tests
 		}
 
 		[TestCase("abs()")]
-		[TestCase("abs(1,2)")]
+		[TestCase("abs(1;2)")]
 		[TestCase("min(1)")]
-		[TestCase("min(1,)")]
-		[TestCase("min(,2)")]
-		[TestCase("min(1,2,3)")]
-		[TestCase("if(1>2,,3)")]
-		[TestCase("if(1>2,3,)")]
-        [TestCase("if(1>2,3,4,5)")]
+		[TestCase("min(1;)")]
+		[TestCase("min(;2)")]
+		[TestCase("min(1;2;3)")]
+		[TestCase("if(1>2;;3)")]
+		[TestCase("if(1>2;3;)")]
+        [TestCase("if(1>2;3;4;5)")]
         public void InvalidArgumentCount_ThrowsArgumentCountException(string equation)
 		{
 			var compiler = new EquationCompiler(equation);
@@ -364,7 +364,7 @@ namespace dotMath.Tests
 		[TestCase(5, 10, 15, 30)]
         public void SupportFunc4Double_Succeeds(double a, double b, double c, double d)
         {
-			var compiler = new EquationCompiler($"sum({a},{b},{c})");
+			var compiler = new EquationCompiler($"sum({a};{b};{c})");
 			compiler.AddFunction("sum", (double x, double y, double z) => x + y + z);
             Assert.AreEqual(d, compiler.Calculate());
         }
@@ -373,7 +373,7 @@ namespace dotMath.Tests
 		[TestCase(0, 1.0, 2.0, 2.0)]
 		public void SupportFuncBool3Double_Succeeds(double a, double b, double c, double d) 
 		{
-			var compiler = new EquationCompiler($"test({a},{b},{c})");
+			var compiler = new EquationCompiler($"test({a};{b};{c})");
 			compiler.AddFunction("test", (bool x, double y, double z) => 
 			{
 				if (x) return y;

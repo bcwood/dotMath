@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using dotMath.Exceptions;
 
 namespace dotMath.Core
@@ -10,19 +11,22 @@ namespace dotMath.Core
 	/// </summary>
 	internal class Parser
 	{
+        private readonly CultureInfo _cultureInfo;
 		private string _function;
-		private List<Token> _tokens;
+        private List<Token> _tokens;
 		private Stack<char> _parentheses;
 
 		/// <summary>
 		/// Takes an expression and launches the parsing process.
 		/// </summary>
 		/// <param name="function">The expression string to be parsed.</param>
-		public Parser(string function)
+        /// <param name="cultureInfo">The culture used to parse equations.</param>
+		public Parser(string function, CultureInfo cultureInfo)
 		{
 			_function = function;
+            _cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 
-			this.Parse();
+            this.Parse();
 		}
 
 		/// <summary>
@@ -46,7 +50,7 @@ namespace dotMath.Core
 			
 			foreach (char currentChar in _function)
 			{
-				switch (Token.GetTypeByChar(currentChar))
+				switch (Token.GetTypeByChar(currentChar, _cultureInfo))
 				{
 					case TokenType.Whitespace:
 						if (!string.IsNullOrEmpty(token))

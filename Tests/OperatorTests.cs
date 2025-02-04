@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using NUnit.Framework;
 using dotMath.Exceptions;
 
@@ -14,6 +15,163 @@ namespace dotMath.Tests
 
 			Assert.AreEqual(4.2, compiler.Calculate());
 		}
+
+		[Test]
+		public void ConstantWithGroupSeparator()
+		{
+			var compiler = new EquationCompiler("4,200");
+
+			Assert.AreEqual(4200.0, compiler.Calculate());
+		}
+        
+        [Test]
+        public void ConstantWithCulture_DE()
+        {
+            var compiler = new EquationCompiler("4,2", CultureInfo.GetCultureInfo("de-DE"));
+            Assert.AreEqual(4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_EN()
+        {
+            var compiler = new EquationCompiler("4.2", CultureInfo.GetCultureInfo("en-US"));
+            Assert.AreEqual(4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_FR()
+        {
+            var compiler = new EquationCompiler("4,2", CultureInfo.GetCultureInfo("fr-FR"));
+            Assert.AreEqual(4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_CH()
+        {
+            var compiler = new EquationCompiler("4\u202f200,50", CultureInfo.GetCultureInfo("fr-CH"));
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_CH_ApostropheEdgeCase()
+        {
+            var compiler = new EquationCompiler("4'200,50", CultureInfo.GetCultureInfo("fr-CH"));
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_RU()
+        {
+            var compiler = new EquationCompiler("4\u00a0200,50", CultureInfo.GetCultureInfo("ru-RU"));
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_ES()
+        {
+            var compiler = new EquationCompiler("4.200,50", CultureInfo.GetCultureInfo("es-ES"));
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void ConstantWithCulture_SE()
+        {
+            var compiler = new EquationCompiler("4\u00a0200,50", CultureInfo.GetCultureInfo("sv-SE"));
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void LeadingAndTrailingSpaces_EN()
+        {
+            var compiler = new EquationCompiler(" 4.2 ", CultureInfo.GetCultureInfo("en-US"));
+            Assert.AreEqual(4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void LeadingAndTrailingSpaces_DE()
+        {
+            var compiler = new EquationCompiler(" 4,2 ", CultureInfo.GetCultureInfo("de-DE"));
+            Assert.AreEqual(4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void DifferentGroupSeparators_FR()
+        {
+            var compiler = new EquationCompiler("4\u202f200,50", CultureInfo.GetCultureInfo("fr-FR")); // French narrow no-break space
+            Assert.AreEqual(4200.50, compiler.Calculate());
+        }
+
+        [Test]
+        public void NegativeNumber_EN()
+        {
+            var compiler = new EquationCompiler("-4.2", CultureInfo.GetCultureInfo("en-US"));
+            Assert.AreEqual(-4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void NegativeNumber_DE()
+        {
+            var compiler = new EquationCompiler("-4,2", CultureInfo.GetCultureInfo("de-DE"));
+            Assert.AreEqual(-4.2, compiler.Calculate());
+        }
+
+        [Test]
+        public void NoDecimalPlaces_EN()
+        {
+            var compiler = new EquationCompiler("1000", CultureInfo.GetCultureInfo("en-US"));
+            Assert.AreEqual(1000, compiler.Calculate());
+        }
+
+        [Test]
+        public void NoDecimalPlaces_RU()
+        {
+            var compiler = new EquationCompiler("1\u00a0000", CultureInfo.GetCultureInfo("ru-RU")); // Space as thousands separator
+            Assert.AreEqual(1000, compiler.Calculate());
+        }
+
+        [Test]
+        public void ScientificNotation_EN()
+        {
+            var compiler = new EquationCompiler("1.2E3", CultureInfo.GetCultureInfo("en-US"));
+            Assert.AreEqual(1200, compiler.Calculate());
+        }
+
+        [Test]
+        public void ScientificNotation_FR()
+        {
+            var compiler = new EquationCompiler("1,2E3", CultureInfo.GetCultureInfo("fr-FR"));
+            Assert.AreEqual(1200, compiler.Calculate());
+        }
+
+        [Test]
+        public void InvalidFormat_DoubleComma_DE()
+        {
+            Assert.Throws<FormatException>(() =>
+            {
+                var compiler = new EquationCompiler("4,,2", CultureInfo.GetCultureInfo("de-DE"));
+                compiler.Calculate();
+            });
+        }
+
+        [Test]
+        public void InvalidFormat_DoubleDot_EN()
+        {
+            Assert.Throws<FormatException>(() =>
+            {
+                var compiler = new EquationCompiler("4..2", CultureInfo.GetCultureInfo("en-US"));
+                compiler.Calculate();
+            });
+        }
+
+        [Test]
+        public void InvalidFormat_MixedSeparators()
+        {
+            Assert.Throws<FormatException>(() =>
+            {
+                var compiler = new EquationCompiler("4.2,3", CultureInfo.GetCultureInfo("en-US"));
+                compiler.Calculate();
+            });
+        }
 
 		[TestCase(-4.2)]
 		[TestCase(4.2)]
